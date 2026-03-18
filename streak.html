@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Streak — Scholarium</title>
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+.streak-hero { text-align:center; padding:40px 20px; }
+.streak-number-wrap { position:relative; display:inline-flex; align-items:center; justify-content:center; margin:20px 0; }
+.streak-ring-svg { position:absolute; inset:-16px; }
+.streak-number { font-family:var(--font-display); font-size:5rem; font-weight:700; color:var(--accent2); text-shadow:var(--hero-text-shadow); line-height:1; }
+.streak-days-label { font-size:1rem; color:var(--text3); letter-spacing:0.1em; text-transform:uppercase; }
+.streak-status { font-family:var(--font-display); font-size:1.2rem; color:var(--text); margin-top:8px; font-style:italic; }
+.streak-milestones { display:flex; flex-wrap:wrap; gap:12px; margin:24px 0; justify-content:center; }
+.milestone-badge {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  padding:14px 18px; min-width:90px; transition:transform 0.2s;
+}
+.milestone-badge.achieved { border-color:var(--accent); box-shadow:0 0 16px var(--glow); }
+.milestone-badge:hover { transform:translateY(-3px); }
+.milestone-icon { font-size:1.6rem; }
+.milestone-days { font-family:var(--font-display); font-size:1.2rem; color:var(--accent); }
+.milestone-label { font-size:0.75rem; color:var(--text3); }
+/* Calendar */
+.streak-calendar { margin-top:8px; }
+.cal-month-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.cal-month-title { font-family:var(--font-display); font-size:1.1rem; color:var(--text); }
+.cal-nav-btn { background:var(--surface); border:1px solid var(--border); color:var(--text2); border-radius:6px; width:32px; height:32px; cursor:pointer; font-size:1rem; transition:all 0.2s; }
+.cal-nav-btn:hover { background:var(--surface2); color:var(--accent); }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+.cal-day-name { text-align:center; font-size:0.75rem; color:var(--text3); text-transform:uppercase; padding:4px 0; letter-spacing:0.06em; }
+.cal-day {
+  aspect-ratio:1; border-radius:6px; display:flex; align-items:center; justify-content:center;
+  font-size:0.85rem; font-family:var(--font-ui); cursor:default; transition:transform 0.15s;
+  background:var(--bg3); color:var(--text3);
+}
+.cal-day.studied { background:var(--accent); color:#fff; box-shadow:0 2px 8px var(--glow); }
+.cal-day.today { outline:2px solid var(--accent2); outline-offset:1px; color:var(--text); }
+.cal-day.empty { background:transparent; }
+.cal-day.studied:hover { transform:scale(1.1); }
+/* Records */
+.records-row { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:16px; margin-top:8px; }
+.record-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px; text-align:center; }
+.record-icon { font-size:1.6rem; margin-bottom:6px; }
+.record-val { font-family:var(--font-display); font-size:1.5rem; color:var(--accent); display:block; }
+.record-lab { font-size:0.78rem; color:var(--text3); text-transform:uppercase; letter-spacing:0.08em; }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="ambient-bg" id="ambientBg"></div>
+  <nav class="nav-sidebar" id="navSidebar">
+    <div class="nav-logo"><span class="nav-logo-icon">📚</span><span class="nav-logo-text">Scholarium</span></div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Home</span></a></li>
+      <li><a href="streak.html" class="nav-link active"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
+      <li><a href="pomodoro.html" class="nav-link"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
+      <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
+      <li><a href="todo.html" class="nav-link"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
+      <li><a href="inspire.html" class="nav-link"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
+      <li><a href="settings.html" class="nav-link"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
+    </ul>
+    <div class="nav-streak-badge"><span class="streak-fire">🔥</span><span id="navStreakCount">0</span><span class="streak-label">day streak</span></div>
+  </nav>
+  <button class="hamburger" id="hamburger" onclick="toggleNav()"><span></span><span></span><span></span></button>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-header-title">🔥 Daily Streak</h1>
+      <p class="page-header-sub">Consistency is the greatest superpower.</p>
+    </div>
+
+    <div class="section-card">
+      <div class="streak-hero">
+        <div class="streak-number-wrap">
+          <svg class="streak-ring-svg" viewBox="0 0 200 200" id="streakRingSvg">
+            <circle cx="100" cy="100" r="88" fill="none" stroke="var(--border)" stroke-width="6"/>
+            <circle cx="100" cy="100" r="88" fill="none" stroke="var(--accent2)" stroke-width="6" stroke-linecap="round"
+              stroke-dasharray="553" stroke-dashoffset="553" id="streakRingArc" transform="rotate(-90 100 100)"
+              style="filter:drop-shadow(0 0 8px var(--accent2));transition:stroke-dashoffset 1s ease"/>
+          </svg>
+          <div>
+            <div class="streak-number" id="streakNum">0</div>
+            <div class="streak-days-label">days</div>
+          </div>
+        </div>
+        <div class="streak-status" id="streakStatus">Begin your streak today!</div>
+      </div>
+
+      <div class="streak-milestones" id="milestonesRow"></div>
+    </div>
+
+    <!-- Calendar -->
+    <div class="section-card">
+      <h2 class="section-title">Study Calendar</h2>
+      <div class="streak-calendar">
+        <div class="cal-month-header">
+          <button class="cal-nav-btn" onclick="prevMonth()">‹</button>
+          <span class="cal-month-title" id="calMonthTitle"></span>
+          <button class="cal-nav-btn" onclick="nextMonth()">›</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+    </div>
+
+    <!-- Records -->
+    <div class="section-card">
+      <h2 class="section-title">Personal Records</h2>
+      <div class="records-row" id="recordsRow"></div>
+    </div>
+  </main>
+</div>
+<script src="app.js"></script>
+<script>
+let calYear, calMonth;
+
+const MILESTONES = [
+  { days:3, icon:'🌱', label:'Sprout' },
+  { days:7, icon:'🔥', label:'One Week' },
+  { days:14, icon:'⚡', label:'Fortnight' },
+  { days:21, icon:'🌟', label:'Habit Formed' },
+  { days:30, icon:'🏆', label:'Month Master' },
+  { days:60, icon:'💫', label:'Dedicated' },
+  { days:100, icon:'👑', label:'Century' },
+  { days:365, icon:'🌠', label:'Year Scholar' },
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme();
+  checkAndUpdateStreak();
+  const d = getStreakData();
+  const streak = d.streak || 0;
+  document.getElementById('navStreakCount').textContent = streak;
+  document.getElementById('streakNum').textContent = streak;
+
+  // Animate ring
+  const max = 365;
+  const pct = Math.min(streak / max, 1);
+  setTimeout(() => {
+    document.getElementById('streakRingArc').style.strokeDashoffset = 553 * (1 - pct);
+  }, 300);
+
+  // Status message
+  const msgs = ['Begin your streak today!', 'Keep going! 🔥', 'You\'re on a roll!', 'Impressive dedication! ⚡', 'Unstoppable scholar! 🏆', 'Legendary consistency! 👑'];
+  const idx = streak === 0 ? 0 : streak < 5 ? 1 : streak < 14 ? 2 : streak < 30 ? 3 : streak < 60 ? 4 : 5;
+  document.getElementById('streakStatus').textContent = msgs[idx];
+
+  renderMilestones(streak);
+  renderRecords(d);
+  const now = new Date();
+  calYear = now.getFullYear(); calMonth = now.getMonth();
+  renderCalendar();
+  spawnParticles();
+});
+
+function renderMilestones(streak) {
+  const row = document.getElementById('milestonesRow');
+  row.innerHTML = MILESTONES.map(m => `
+    <div class="milestone-badge ${streak >= m.days ? 'achieved' : ''}">
+      <span class="milestone-icon">${streak >= m.days ? m.icon : '🔒'}</span>
+      <span class="milestone-days">${m.days}</span>
+      <span class="milestone-label">${m.label}</span>
+    </div>
+  `).join('');
+}
+
+function renderRecords(d) {
+  const sessions = getSessions();
+  const totalMins = sessions.reduce((a, s) => a + s.minutes, 0);
+  const totalDays = d.history ? d.history.length : 0;
+  const todayMins = getTodayStudyMins();
+  const records = [
+    { icon:'🔥', val: d.streak || 0, lab:'Current Streak' },
+    { icon:'🏆', val: d.longestStreak || 0, lab:'Longest Streak' },
+    { icon:'📅', val: totalDays, lab:'Days Studied' },
+    { icon:'⏱️', val: formatMins(totalMins), lab:'Total Study Time' },
+    { icon:'🌳', val: getTreesData().reduce((a,t)=>a+(t.trees?.length||0),0), lab:'Trees Grown' },
+    { icon:'🌅', val: formatMins(todayMins), lab:'Today\'s Focus' },
+  ];
+  document.getElementById('recordsRow').innerHTML = records.map(r => `
+    <div class="record-card">
+      <div class="record-icon">${r.icon}</div>
+      <span class="record-val">${r.val}</span>
+      <span class="record-lab">${r.lab}</span>
+    </div>
+  `).join('');
+}
+
+function renderCalendar() {
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('calMonthTitle').textContent = `${months[calMonth]} ${calYear}`;
+  const grid = document.getElementById('calGrid');
+  const studiedDays = new Set(getStreakData().history || []);
+  const today = new Date().toISOString().slice(0, 10);
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = days.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  for (let i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const iso = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const studied = studiedDays.has(iso);
+    const isToday = iso === today;
+    html += `<div class="cal-day ${studied?'studied':''} ${isToday?'today':''}" title="${iso}">${d}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function prevMonth() {
+  calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+function nextMonth() {
+  calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+}
+
+function spawnParticles() {
+  const bg = document.getElementById('ambientBg');
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement('div'); p.className = 'particle';
+    p.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*8}s;animation-duration:${6+Math.random()*6}s;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;opacity:${0.1+Math.random()*0.3}`;
+    bg.appendChild(p);
+  }
+}
+</script>
+</body>
+</html>
