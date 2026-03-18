@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — Scholarium</title>
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+.settings-section { margin-bottom:32px; }
+.settings-group { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:var(--card-shadow); }
+.settings-group-title { font-family:var(--font-ui); font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text3); padding:14px 20px 8px; }
+.setting-row { display:flex; align-items:center; gap:16px; padding:14px 20px; border-bottom:1px solid var(--border); }
+.setting-row:last-child { border-bottom:none; }
+.setting-icon { font-size:1.2rem; min-width:28px; }
+.setting-label { flex:1; }
+.setting-name { display:block; font-size:0.95rem; color:var(--text); }
+.setting-desc { display:block; font-size:0.8rem; color:var(--text3); margin-top:2px; }
+/* Toggle */
+.toggle-wrap { position:relative; }
+.toggle-input { position:absolute; opacity:0; width:0; height:0; }
+.toggle-slider {
+  display:block; width:46px; height:26px; background:var(--bg3); border-radius:13px;
+  cursor:pointer; transition:background 0.3s;
+  position:relative;
+}
+.toggle-slider::after {
+  content:''; position:absolute; top:3px; left:3px;
+  width:20px; height:20px; border-radius:50%; background:#fff;
+  transition:transform 0.3s; box-shadow:0 2px 4px rgba(0,0,0,0.3);
+}
+.toggle-input:checked + .toggle-slider { background:var(--accent); }
+.toggle-input:checked + .toggle-slider::after { transform:translateX(20px); }
+/* Number input */
+.setting-number { background:var(--bg2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:6px 10px; width:70px; text-align:center; font-family:var(--font-body); font-size:0.9rem; outline:none; }
+.setting-number:focus { border-color:var(--accent); }
+/* Theme grid */
+.theme-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:10px; padding:16px 20px; }
+.theme-card {
+  border-radius:10px; overflow:hidden; cursor:pointer;
+  border:2px solid transparent; transition:all 0.2s;
+  position:relative;
+}
+.theme-card.active { border-color:var(--accent); box-shadow:0 0 16px var(--glow); }
+.theme-card:hover { transform:translateY(-2px); }
+.theme-preview {
+  height:70px;
+  display:flex; align-items:flex-end;
+  padding:8px;
+  position:relative;
+  overflow:hidden;
+}
+.theme-preview-bar { height:4px; border-radius:2px; width:60%; }
+.theme-name { font-family:var(--font-ui); font-size:0.82rem; text-align:center; padding:8px; }
+.theme-active-badge { position:absolute; top:6px; right:6px; background:var(--accent); color:#fff; border-radius:50%; width:18px; height:18px; font-size:0.7rem; display:flex; align-items:center; justify-content:center; }
+/* Danger zone */
+.danger-zone { border-color:var(--error) !important; }
+.setting-row .btn-danger { flex-shrink:0; }
+
+/* About */
+.about-content { padding:20px; }
+.about-content h3 { font-family:var(--font-display); font-size:1.3rem; color:var(--accent); margin-bottom:8px; }
+.about-content p { color:var(--text2); font-size:0.9rem; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="ambient-bg" id="ambientBg"></div>
+  <nav class="nav-sidebar" id="navSidebar">
+    <div class="nav-logo"><span class="nav-logo-icon">📚</span><span class="nav-logo-text">Scholarium</span></div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Home</span></a></li>
+      <li><a href="streak.html" class="nav-link"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
+      <li><a href="pomodoro.html" class="nav-link"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
+      <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
+      <li><a href="todo.html" class="nav-link"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
+      <li><a href="inspire.html" class="nav-link"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
+      <li><a href="settings.html" class="nav-link active"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
+    </ul>
+    <div class="nav-streak-badge"><span class="streak-fire">🔥</span><span id="navStreakCount">0</span><span class="streak-label">day streak</span></div>
+  </nav>
+  <button class="hamburger" id="hamburger" onclick="toggleNav()"><span></span><span></span><span></span></button>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-header-title">⚙️ Settings</h1>
+      <p class="page-header-sub">Customize Scholarium to feel like home.</p>
+    </div>
+
+    <!-- Theme -->
+    <div class="settings-section">
+      <div class="settings-group">
+        <p class="settings-group-title">✦ Choose Your Aesthetic</p>
+        <div class="theme-grid" id="themeGrid"></div>
+      </div>
+    </div>
+
+    <!-- Pomodoro -->
+    <div class="settings-section">
+      <div class="settings-group">
+        <p class="settings-group-title">⏱️ Pomodoro Timer</p>
+        <div class="setting-row">
+          <span class="setting-icon">🍅</span>
+          <div class="setting-label"><span class="setting-name">Focus Duration</span><span class="setting-desc">Minutes per focus session</span></div>
+          <input type="number" class="setting-number" id="setFocus" min="5" max="90" value="25" onchange="saveSetting()">
+        </div>
+        <div class="setting-row">
+          <span class="setting-icon">☕</span>
+          <div class="setting-label"><span class="setting-name">Short Break</span><span class="setting-desc">Minutes for short break</span></div>
+          <input type="number" class="setting-number" id="setShort" min="1" max="30" value="5" onchange="saveSetting()">
+        </div>
+        <div class="setting-row">
+          <span class="setting-icon">🌿</span>
+          <div class="setting-label"><span class="setting-name">Long Break</span><span class="setting-desc">Minutes for long break</span></div>
+          <input type="number" class="setting-number" id="setLong" min="5" max="60" value="15" onchange="saveSetting()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications & Sound -->
+    <div class="settings-section">
+      <div class="settings-group">
+        <p class="settings-group-title">🔔 Notifications & Sound</p>
+        <div class="setting-row">
+          <span class="setting-icon">🔔</span>
+          <div class="setting-label"><span class="setting-name">Push Notifications</span><span class="setting-desc">Reminders to study and session alerts</span></div>
+          <div class="toggle-wrap"><input type="checkbox" class="toggle-input" id="setNotif" onchange="saveSetting()"><label class="toggle-slider" for="setNotif"></label></div>
+        </div>
+        <div class="setting-row">
+          <span class="setting-icon">🔊</span>
+          <div class="setting-label"><span class="setting-name">Sound Effects</span><span class="setting-desc">Bell sound when session ends</span></div>
+          <div class="toggle-wrap"><input type="checkbox" class="toggle-input" id="setSound" onchange="saveSetting()" checked><label class="toggle-slider" for="setSound"></label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goals -->
+    <div class="settings-section">
+      <div class="settings-group">
+        <p class="settings-group-title">🎯 Daily Goals</p>
+        <div class="setting-row">
+          <span class="setting-icon">⏱️</span>
+          <div class="setting-label"><span class="setting-name">Daily Study Goal</span><span class="setting-desc">Target study minutes per day</span></div>
+          <input type="number" class="setting-number" id="setGoal" min="15" max="600" value="120" onchange="saveSetting()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Data -->
+    <div class="settings-section">
+      <div class="settings-group">
+        <p class="settings-group-title">💾 Data</p>
+        <div class="setting-row">
+          <span class="setting-icon">📤</span>
+          <div class="setting-label"><span class="setting-name">Export Data</span><span class="setting-desc">Download all your data as JSON</span></div>
+          <button class="btn-secondary" onclick="exportData()">Export</button>
+        </div>
+        <div class="setting-row">
+          <span class="setting-icon">📥</span>
+          <div class="setting-label"><span class="setting-name">Import Data</span><span class="setting-desc">Restore from a backup</span></div>
+          <label class="btn-secondary" style="cursor:pointer">Import<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Danger zone -->
+    <div class="settings-section">
+      <div class="settings-group danger-zone">
+        <p class="settings-group-title">⚠️ Danger Zone</p>
+        <div class="setting-row">
+          <span class="setting-icon">🗑️</span>
+          <div class="setting-label"><span class="setting-name">Clear All Data</span><span class="setting-desc">Permanently delete all subjects, sessions, and streak data</span></div>
+          <button class="btn-danger" onclick="clearAllData()">Clear All</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="settings-section">
+      <div class="settings-group">
+        <div class="about-content">
+          <h3>Scholarium ✦</h3>
+          <p>Your personal study sanctuary. Built with care for scholars who love beauty and knowledge in equal measure.<br><br>All your data is stored locally in your browser — private, safe, yours.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="app.js"></script>
+<script>
+const THEMES = [
+  { id:'dark-academia', name:'Dark Academia', bg:'#1a1510', accent:'#c8956c', bar:'#c8956c' },
+  { id:'light-academia', name:'Light Academia', bg:'#f5f0e8', accent:'#8b5e3c', bar:'#8b5e3c' },
+  { id:'cottagecore', name:'Cottagecore', bg:'#1e1a14', accent:'#8fad7a', bar:'#8fad7a' },
+  { id:'indie', name:'Indie', bg:'#0f0f14', accent:'#c084fc', bar:'#c084fc' },
+  { id:'ethereal', name:'Ethereal', bg:'#f8f4ff', accent:'#9b59d0', bar:'#9b59d0' },
+  { id:'fairycore', name:'Fairycore', bg:'#fff8f0', accent:'#f08030', bar:'#f08030' },
+  { id:'witchy', name:'Witchy', bg:'#0d0810', accent:'#9d4edd', bar:'#9d4edd' },
+  { id:'galaxy', name:'Galaxy', bg:'#04060f', accent:'#4facfe', bar:'#4facfe' },
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme();
+  checkAndUpdateStreak();
+  document.getElementById('navStreakCount').textContent = getStreak();
+  loadSettingsUI();
+  renderThemeGrid();
+  spawnParticles();
+});
+
+function renderThemeGrid() {
+  const current = localStorage.getItem('scholarium_theme') || 'dark-academia';
+  document.getElementById('themeGrid').innerHTML = THEMES.map(t => `
+    <div class="theme-card ${t.id===current?'active':''}" onclick="applyThemeChoice('${t.id}')">
+      <div class="theme-preview" style="background:${t.bg}">
+        ${t.id===current?'<div class="theme-active-badge">✓</div>':''}
+        <div class="theme-preview-bar" style="background:${t.bar}"></div>
+      </div>
+      <div class="theme-name" style="background:${t.bg};color:${t.accent}">${t.name}</div>
+    </div>
+  `).join('');
+}
+
+function applyThemeChoice(themeId) {
+  setTheme(themeId);
+  renderThemeGrid();
+  saveSetting();
+  showToast('Theme applied! ✨');
+}
+
+function loadSettingsUI() {
+  const s = getSettings();
+  document.getElementById('setFocus').value = s.pomoDuration || 25;
+  document.getElementById('setShort').value = s.shortBreak || 5;
+  document.getElementById('setLong').value = s.longBreak || 15;
+  document.getElementById('setNotif').checked = s.notifications || false;
+  document.getElementById('setSound').checked = s.soundEnabled !== false;
+  document.getElementById('setGoal').value = s.dailyGoalMins || 120;
+}
+
+function saveSetting() {
+  const s = getSettings();
+  s.pomoDuration = parseInt(document.getElementById('setFocus').value) || 25;
+  s.shortBreak = parseInt(document.getElementById('setShort').value) || 5;
+  s.longBreak = parseInt(document.getElementById('setLong').value) || 15;
+  s.notifications = document.getElementById('setNotif').checked;
+  s.soundEnabled = document.getElementById('setSound').checked;
+  s.dailyGoalMins = parseInt(document.getElementById('setGoal').value) || 120;
+  s.theme = localStorage.getItem('scholarium_theme') || 'dark-academia';
+  saveSettings(s);
+  if (s.notifications && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function exportData() {
+  const data = {
+    subjects: getSubjects(),
+    sessions: getSessions(),
+    streak: getStreakData(),
+    trees: getTreesData(),
+    todos: getTodos(),
+    settings: getSettings(),
+    exported: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `scholarium-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  showToast('Data exported! 📤');
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.subjects) saveSubjects(data.subjects);
+      if (data.sessions) saveSessions(data.sessions);
+      if (data.streak) saveStreakData(data.streak);
+      if (data.trees) saveTreesData(data.trees);
+      if (data.todos) saveTodos(data.todos);
+      if (data.settings) saveSettings(data.settings);
+      showToast('Data imported successfully! 📥');
+      setTimeout(() => location.reload(), 1000);
+    } catch(err) { showToast('Import failed — invalid file.'); }
+  };
+  reader.readAsText(file);
+}
+
+function clearAllData() {
+  if (!confirm('This will permanently delete ALL your data. Are you absolutely sure?')) return;
+  if (!confirm('This cannot be undone. Delete everything?')) return;
+  const keys = ['scholarium_subjects','scholarium_sessions','scholarium_streak','scholarium_trees','scholarium_todos'];
+  keys.forEach(k => localStorage.removeItem(k));
+  showToast('All data cleared.');
+  setTimeout(() => window.location.href = 'index.html', 1500);
+}
+
+function spawnParticles() {
+  const bg=document.getElementById('ambientBg');
+  for(let i=0;i<12;i++){const p=document.createElement('div');p.className='particle';p.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*8}s;animation-duration:${6+Math.random()*6}s;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;opacity:${0.1+Math.random()*0.3}`;bg.appendChild(p);}
+}
+</script>
+</body>
+</html>
