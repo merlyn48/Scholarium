@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tasks — Scholarium</title>
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+.todo-header-row { display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+.todo-filter-tabs { display:flex; gap:4px; background:var(--bg3); border-radius:8px; padding:4px; }
+.filter-tab { background:transparent; border:none; color:var(--text3); padding:6px 14px; border-radius:6px; cursor:pointer; font-family:var(--font-ui); font-size:0.85rem; transition:all 0.2s; }
+.filter-tab.active { background:var(--surface); color:var(--text); }
+.todo-progress { margin-bottom:16px; }
+.progress-bar-wrap { height:6px; background:var(--bg3); border-radius:3px; overflow:hidden; }
+.progress-bar-fill { height:100%; background:var(--accent); border-radius:3px; transition:width 0.5s; }
+.progress-label { font-size:0.82rem; color:var(--text3); margin-bottom:6px; display:flex; justify-content:space-between; }
+/* Add task form */
+.add-task-form { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+.priority-sel { background:var(--bg2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:10px; font-family:var(--font-body); font-size:0.88rem; outline:none; max-width:130px; }
+.subject-sel { background:var(--bg2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:10px; font-family:var(--font-body); font-size:0.88rem; outline:none; flex:1; min-width:120px; }
+/* Tasks */
+.tasks-list { display:flex; flex-direction:column; gap:8px; }
+.task-item {
+  display:flex; align-items:center; gap:12px;
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  padding:12px 14px; transition:all 0.2s; cursor:default;
+  animation:task-in 0.3s ease;
+}
+@keyframes task-in { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+.task-item.completed { opacity:0.5; }
+.task-item.completed .task-text { text-decoration:line-through; color:var(--text3); }
+.task-item:hover { border-color:var(--accent); box-shadow:0 2px 12px var(--glow); }
+.task-check {
+  width:22px; height:22px; border-radius:50%; border:2px solid var(--border);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:all 0.2s; background:var(--bg2);
+}
+.task-check.checked { background:var(--accent); border-color:var(--accent); }
+.task-check.checked::after { content:'✓'; color:#fff; font-size:0.75rem; }
+.task-body { flex:1; min-width:0; }
+.task-text { font-size:0.95rem; color:var(--text); display:block; }
+.task-meta { font-size:0.78rem; color:var(--text3); display:flex; gap:8px; margin-top:3px; flex-wrap:wrap; }
+.priority-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+.p-high { background:#c26b6b; }
+.p-med { background:#d4a04a; }
+.p-low { background:#7b9e8e; }
+.task-del { background:transparent; border:none; color:var(--text3); cursor:pointer; font-size:0.9rem; padding:4px; transition:color 0.2s; }
+.task-del:hover { color:var(--error); }
+.task-subject-tag { background:var(--bg3); border-radius:4px; padding:1px 6px; font-size:0.75rem; }
+/* Date filter row */
+.date-filter-row { display:flex; gap:8px; align-items:center; margin-bottom:14px; flex-wrap:wrap; }
+.date-input { background:var(--bg2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:8px 12px; font-family:var(--font-body); font-size:0.88rem; outline:none; }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="ambient-bg" id="ambientBg"></div>
+  <nav class="nav-sidebar" id="navSidebar">
+    <div class="nav-logo"><span class="nav-logo-icon">📚</span><span class="nav-logo-text">Scholarium</span></div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Home</span></a></li>
+      <li><a href="streak.html" class="nav-link"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
+      <li><a href="pomodoro.html" class="nav-link"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
+      <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
+      <li><a href="todo.html" class="nav-link active"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
+      <li><a href="inspire.html" class="nav-link"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
+      <li><a href="settings.html" class="nav-link"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
+    </ul>
+    <div class="nav-streak-badge"><span class="streak-fire">🔥</span><span id="navStreakCount">0</span><span class="streak-label">day streak</span></div>
+  </nav>
+  <button class="hamburger" id="hamburger" onclick="toggleNav()"><span></span><span></span><span></span></button>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-header-title">✅ Tasks</h1>
+      <p class="page-header-sub">One page for everything that needs to be done.</p>
+    </div>
+
+    <div class="section-card">
+      <!-- Progress -->
+      <div class="todo-progress">
+        <div class="progress-label"><span id="progressLabel">0 of 0 tasks completed</span><span id="progressPct">0%</span></div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+      </div>
+
+      <!-- Add task -->
+      <div class="add-task-form">
+        <input type="text" id="taskInput" class="fancy-input" placeholder="Add a new task..." style="flex:2">
+        <select id="taskPriority" class="priority-sel">
+          <option value="med">⚡ Medium</option>
+          <option value="high">🔴 High</option>
+          <option value="low">🟢 Low</option>
+        </select>
+        <select id="taskSubject" class="subject-sel">
+          <option value="">📚 Any subject</option>
+        </select>
+        <input type="date" id="taskDue" class="date-input" title="Due date (optional)">
+        <button class="btn-primary" onclick="addTask()">Add</button>
+      </div>
+
+      <!-- Filter -->
+      <div class="todo-header-row">
+        <div class="todo-filter-tabs">
+          <button class="filter-tab active" onclick="setFilter('all',this)">All</button>
+          <button class="filter-tab" onclick="setFilter('today',this)">Today</button>
+          <button class="filter-tab" onclick="setFilter('active',this)">Active</button>
+          <button class="filter-tab" onclick="setFilter('done',this)">Done</button>
+        </div>
+        <button class="btn-secondary" onclick="clearCompleted()" style="margin-left:auto">Clear done</button>
+      </div>
+
+      <div class="tasks-list" id="tasksList"></div>
+      <div class="empty-state" id="tasksEmpty" style="display:none"><div class="empty-icon">🌙</div><p>No tasks here. Enjoy the clarity!</p></div>
+    </div>
+  </main>
+</div>
+<script src="app.js"></script>
+<script>
+let currentFilter = 'all';
+
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme();
+  checkAndUpdateStreak();
+  document.getElementById('navStreakCount').textContent = getStreak();
+  populateSubjectSelect();
+  renderTasks();
+  spawnParticles();
+  document.getElementById('taskInput').addEventListener('keydown', e => { if (e.key==='Enter') addTask(); });
+});
+
+function populateSubjectSelect() {
+  const subjects = getSubjects();
+  const sel = document.getElementById('taskSubject');
+  subjects.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id; opt.textContent = `${s.emoji} ${s.name}`; sel.appendChild(opt);
+  });
+}
+
+function addTask() {
+  const text = document.getElementById('taskInput').value.trim();
+  if (!text) return;
+  const todos = getTodos();
+  const subjectId = document.getElementById('taskSubject').value;
+  const subjects = getSubjects();
+  const subject = subjects.find(s => s.id === subjectId);
+  todos.push({
+    id: Date.now().toString(), text, priority: document.getElementById('taskPriority').value,
+    subjectId, subjectName: subject?.name || '', subjectEmoji: subject?.emoji || '',
+    due: document.getElementById('taskDue').value, done: false, createdAt: new Date().toISOString()
+  });
+  saveTodos(todos);
+  document.getElementById('taskInput').value = '';
+  document.getElementById('taskDue').value = '';
+  renderTasks();
+  showToast('Task added! ✅');
+}
+
+function toggleTask(id) {
+  const todos = getTodos();
+  const t = todos.find(x => x.id === id);
+  if (t) { t.done = !t.done; saveTodos(todos); renderTasks(); }
+}
+
+function deleteTask(id) {
+  saveTodos(getTodos().filter(x => x.id !== id));
+  renderTasks();
+}
+
+function clearCompleted() {
+  saveTodos(getTodos().filter(x => !x.done));
+  renderTasks();
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderTasks();
+}
+
+function renderTasks() {
+  let todos = getTodos();
+  const today = new Date().toISOString().slice(0, 10);
+  if (currentFilter === 'today') todos = todos.filter(t => t.due === today || !t.due);
+  else if (currentFilter === 'active') todos = todos.filter(t => !t.done);
+  else if (currentFilter === 'done') todos = todos.filter(t => t.done);
+  // Sort: high first, then undone before done
+  const pOrder = { high: 0, med: 1, low: 2 };
+  todos.sort((a, b) => {
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    return (pOrder[a.priority] || 1) - (pOrder[b.priority] || 1);
+  });
+  const list = document.getElementById('tasksList');
+  const empty = document.getElementById('tasksEmpty');
+  if (!todos.length) { list.innerHTML = ''; empty.style.display = 'flex'; updateProgress(); return; }
+  empty.style.display = 'none';
+  list.innerHTML = todos.map(t => `
+    <div class="task-item ${t.done ? 'completed' : ''}">
+      <div class="task-check ${t.done ? 'checked' : ''}" onclick="toggleTask('${t.id}')"></div>
+      <div class="task-body">
+        <span class="task-text">${t.text}</span>
+        <div class="task-meta">
+          <span><span class="priority-dot p-${t.priority}"></span> ${t.priority}</span>
+          ${t.subjectName ? `<span class="task-subject-tag">${t.subjectEmoji} ${t.subjectName}</span>` : ''}
+          ${t.due ? `<span>📅 ${t.due}</span>` : ''}
+        </div>
+      </div>
+      <button class="task-del" onclick="deleteTask('${t.id}')">🗑️</button>
+    </div>
+  `).join('');
+  updateProgress();
+}
+
+function updateProgress() {
+  const all = getTodos();
+  const done = all.filter(t => t.done).length;
+  const pct = all.length ? Math.round(done / all.length * 100) : 0;
+  document.getElementById('progressLabel').textContent = `${done} of ${all.length} tasks completed`;
+  document.getElementById('progressPct').textContent = `${pct}%`;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function spawnParticles() {
+  const bg=document.getElementById('ambientBg');
+  for(let i=0;i<12;i++){const p=document.createElement('div');p.className='particle';p.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*8}s;animation-duration:${6+Math.random()*6}s;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;opacity:${0.1+Math.random()*0.3}`;bg.appendChild(p);}
+}
+</script>
+</body>
+</html>
