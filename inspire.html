@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inspire — Scholarium</title>
+<link rel="stylesheet" href="theme.css">
+<link rel="stylesheet" href="shared.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Hero quote */
+.inspire-hero {
+  position: relative;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 40px;
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg2) 100%);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  margin-bottom: 32px;
+  overflow: hidden;
+}
+.inspire-deco-tl { position:absolute; top:-30px; left:-30px; font-size:12rem; opacity:0.03; pointer-events:none; transform:rotate(-15deg); }
+.inspire-deco-br { position:absolute; bottom:-30px; right:-30px; font-size:12rem; opacity:0.03; pointer-events:none; transform:rotate(15deg); }
+.inspire-quote-mark { font-family:var(--font-display); font-size:5rem; color:var(--accent); opacity:0.3; line-height:0.6; margin-bottom:16px; }
+.inspire-quote-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.5vw, 2rem);
+  color: var(--text);
+  font-style: italic;
+  max-width: 700px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  transition: opacity 0.5s;
+}
+.inspire-author {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  transition: opacity 0.5s;
+}
+.inspire-actions { display:flex; gap:12px; margin-top:24px; flex-wrap:wrap; justify-content:center; }
+.inspire-category {
+  display: inline-flex; align-items:center; gap:6px;
+  background: var(--bg3); border: 1px solid var(--border); border-radius:20px;
+  padding: 4px 14px; font-size:0.82rem; color:var(--text3);
+  font-family:var(--font-ui); margin-top:12px;
+}
+
+/* Category pills */
+.cat-pills { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+.cat-pill { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:6px 16px; font-size:0.85rem; cursor:pointer; color:var(--text2); font-family:var(--font-ui); transition:all 0.2s; }
+.cat-pill.active, .cat-pill:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+/* Quotes grid */
+.quotes-masonry { columns:2; gap:16px; }
+@media(max-width:640px) { .quotes-masonry { columns:1; } }
+.quote-card {
+  break-inside: avoid;
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  padding:20px; margin-bottom:16px; transition:transform 0.2s, box-shadow 0.2s;
+  cursor:pointer; position:relative; overflow:hidden;
+}
+.quote-card:hover { transform:translateY(-3px); box-shadow:var(--card-shadow); }
+.quote-card::before { content:'"'; position:absolute; top:-10px; left:8px; font-family:var(--font-display); font-size:6rem; color:var(--accent); opacity:0.07; pointer-events:none; }
+.quote-card-text { font-family:var(--font-display); font-size:1rem; font-style:italic; color:var(--text); line-height:1.5; margin-bottom:10px; }
+.quote-card-author { font-family:var(--font-ui); font-size:0.8rem; color:var(--accent); letter-spacing:0.08em; }
+.quote-card-cat { float:right; background:var(--bg3); border-radius:4px; padding:2px 8px; font-size:0.72rem; color:var(--text3); }
+/* Affirmations */
+.affirmation-wrap { background:linear-gradient(135deg,var(--surface),var(--bg2)); border:1px solid var(--border); border-radius:14px; padding:24px; text-align:center; }
+.affirmation-text { font-family:var(--font-display); font-size:1.2rem; color:var(--text); font-style:italic; margin:12px 0; }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+  <div class="ambient-bg" id="ambientBg"></div>
+  <nav class="nav-sidebar" id="navSidebar">
+    <div class="nav-logo"><span class="nav-logo-icon">📚</span><span class="nav-logo-text">Scholarium</span></div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Home</span></a></li>
+      <li><a href="streak.html" class="nav-link"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
+      <li><a href="pomodoro.html" class="nav-link"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
+      <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
+      <li><a href="todo.html" class="nav-link"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
+      <li><a href="inspire.html" class="nav-link active"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
+      <li><a href="settings.html" class="nav-link"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
+    </ul>
+    <div class="nav-streak-badge"><span class="streak-fire">🔥</span><span id="navStreakCount">0</span><span class="streak-label">day streak</span></div>
+  </nav>
+  <button class="hamburger" id="hamburger" onclick="toggleNav()"><span></span><span></span><span></span></button>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1 class="page-header-title">✨ Inspire</h1>
+      <p class="page-header-sub">A breath of wonder before you begin.</p>
+    </div>
+
+    <!-- Hero quote -->
+    <div class="inspire-hero">
+      <div class="inspire-deco-tl">✦</div>
+      <div class="inspire-deco-br">✦</div>
+      <div class="inspire-quote-mark">"</div>
+      <p class="inspire-quote-text" id="heroQuoteText">Loading...</p>
+      <p class="inspire-author" id="heroQuoteAuthor">—</p>
+      <div class="inspire-category" id="heroCategory"></div>
+      <div class="inspire-actions">
+        <button class="btn-primary" onclick="newQuote()">✨ New Quote</button>
+        <button class="btn-secondary" onclick="saveQuote()">🤍 Save</button>
+        <button class="btn-secondary" onclick="generateAIQuote()">🤖 AI Inspire Me</button>
+      </div>
+    </div>
+
+    <!-- Daily affirmation -->
+    <div class="section-card">
+      <h2 class="section-title">🌅 Today's Affirmation</h2>
+      <div class="affirmation-wrap">
+        <p class="affirmation-text" id="dailyAffirmation">Loading...</p>
+        <button class="btn-secondary" onclick="newAffirmation()">Refresh</button>
+      </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="section-card">
+      <h2 class="section-title">Quote Collection</h2>
+      <div class="cat-pills" id="catPills"></div>
+      <div class="quotes-masonry" id="quotesMasonry"></div>
+    </div>
+
+    <!-- Saved quotes -->
+    <div class="section-card" id="savedSection" style="display:none">
+      <h2 class="section-title">🤍 Saved Quotes</h2>
+      <div class="quotes-masonry" id="savedMasonry"></div>
+    </div>
+  </main>
+</div>
+<script src="app.js"></script>
+<script>
+const QUOTES = [
+  {text:"The secret of getting ahead is getting started.",author:"Mark Twain",cat:"motivation"},
+  {text:"It does not matter how slowly you go, as long as you do not stop.",author:"Confucius",cat:"perseverance"},
+  {text:"Learning is not attained by chance, it must be sought for with ardor and attended to with diligence.",author:"Abigail Adams",cat:"learning"},
+  {text:"An investment in knowledge pays the best interest.",author:"Benjamin Franklin",cat:"learning"},
+  {text:"Education is the passport to the future.",author:"Malcolm X",cat:"education"},
+  {text:"The beautiful thing about learning is that nobody can take it away from you.",author:"B.B. King",cat:"learning"},
+  {text:"In the middle of every difficulty lies opportunity.",author:"Albert Einstein",cat:"motivation"},
+  {text:"The more that you read, the more things you will know.",author:"Dr. Seuss",cat:"reading"},
+  {text:"A reader lives a thousand lives before they die. The one who never reads lives only one.",author:"George R.R. Martin",cat:"reading"},
+  {text:"Not all those who wander are lost.",author:"J.R.R. Tolkien",cat:"philosophy"},
+  {text:"The mind is not a vessel to be filled, but a fire to be kindled.",author:"Plutarch",cat:"philosophy"},
+  {text:"Creativity is intelligence having fun.",author:"Albert Einstein",cat:"creativity"},
+  {text:"You must be the change you wish to see in the world.",author:"Mahatma Gandhi",cat:"philosophy"},
+  {text:"You are braver than you believe, stronger than you seem, and smarter than you think.",author:"A.A. Milne",cat:"motivation"},
+  {text:"Do not be embarrassed by your failures, learn from them and start again.",author:"Richard Branson",cat:"perseverance"},
+  {text:"The future belongs to those who believe in the beauty of their dreams.",author:"Eleanor Roosevelt",cat:"motivation"},
+  {text:"The secret to doing good research is always to be a little underemployed.",author:"Ward Cunningham",cat:"learning"},
+  {text:"Wonder is the beginning of wisdom.",author:"Socrates",cat:"philosophy"},
+  {text:"I am not afraid of storms, for I am learning how to sail my ship.",author:"Louisa May Alcott",cat:"perseverance"},
+  {text:"Books are a uniquely portable magic.",author:"Stephen King",cat:"reading"},
+  {text:"Live as if you were to die tomorrow. Learn as if you were to live forever.",author:"Mahatma Gandhi",cat:"learning"},
+  {text:"Nothing is impossible. The word itself says 'I'm possible!'",author:"Audrey Hepburn",cat:"motivation"},
+  {text:"The only impossible journey is the one you never begin.",author:"Tony Robbins",cat:"motivation"},
+  {text:"Start where you are. Use what you have. Do what you can.",author:"Arthur Ashe",cat:"motivation"},
+  {text:"It always seems impossible until it's done.",author:"Nelson Mandela",cat:"perseverance"},
+  {text:"In learning you will teach, and in teaching you will learn.",author:"Phil Collins",cat:"learning"},
+  {text:"Knowledge is power.",author:"Francis Bacon",cat:"education"},
+  {text:"The capacity to learn is a gift; the ability to learn is a skill; the willingness to learn is a choice.",author:"Brian Herbert",cat:"learning"},
+];
+
+const AFFIRMATIONS = [
+  "I have the strength and knowledge I need for today.",
+  "Every page I read brings me closer to my goals.",
+  "I embrace challenges as opportunities to grow.",
+  "My mind is sharp, focused, and ready to learn.",
+  "Progress, no matter how small, is still progress.",
+  "I am becoming the scholar I was always meant to be.",
+  "Curiosity is my compass and knowledge is my destination.",
+  "Today I plant seeds that will bloom into wisdom.",
+  "I trust my ability to understand difficult concepts.",
+  "Each session of focus brings me closer to mastery.",
+];
+
+const CATS = ['all','motivation','learning','perseverance','reading','philosophy','education','creativity'];
+let activeFilter = 'all';
+let currentQuoteIdx = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme();
+  checkAndUpdateStreak();
+  document.getElementById('navStreakCount').textContent = getStreak();
+  showHeroQuote();
+  showDailyAffirmation();
+  renderCatPills();
+  renderQuotesMasonry('all');
+  renderSavedQuotes();
+  spawnParticles();
+});
+
+function showHeroQuote() {
+  const saved = JSON.parse(localStorage.getItem('scholarium_hero_quote_idx') || '0');
+  currentQuoteIdx = Math.floor(Math.random() * QUOTES.length);
+  const q = QUOTES[currentQuoteIdx];
+  document.getElementById('heroQuoteText').textContent = q.text;
+  document.getElementById('heroQuoteAuthor').textContent = `— ${q.author}`;
+  document.getElementById('heroCategory').textContent = `✦ ${q.cat}`;
+}
+
+function newQuote() {
+  const txt = document.getElementById('heroQuoteText');
+  const auth = document.getElementById('heroQuoteAuthor');
+  txt.style.opacity = 0; auth.style.opacity = 0;
+  setTimeout(() => {
+    currentQuoteIdx = (currentQuoteIdx + 1) % QUOTES.length;
+    const q = QUOTES[currentQuoteIdx];
+    txt.textContent = q.text;
+    auth.textContent = `— ${q.author}`;
+    document.getElementById('heroCategory').textContent = `✦ ${q.cat}`;
+    txt.style.opacity = 1; auth.style.opacity = 1;
+  }, 400);
+}
+
+function saveQuote() {
+  const q = QUOTES[currentQuoteIdx];
+  let saved = JSON.parse(localStorage.getItem('scholarium_saved_quotes') || '[]');
+  if (!saved.find(s => s.text === q.text)) {
+    saved.push(q);
+    localStorage.setItem('scholarium_saved_quotes', JSON.stringify(saved));
+    showToast('Quote saved! 🤍');
+    renderSavedQuotes();
+  } else { showToast('Already saved!'); }
+}
+
+function showDailyAffirmation() {
+  const idx = new Date().getDate() % AFFIRMATIONS.length;
+  document.getElementById('dailyAffirmation').textContent = AFFIRMATIONS[idx];
+}
+
+function newAffirmation() {
+  const idx = Math.floor(Math.random() * AFFIRMATIONS.length);
+  document.getElementById('dailyAffirmation').textContent = AFFIRMATIONS[idx];
+}
+
+async function generateAIQuote() {
+  const btn = document.querySelector('.inspire-actions .btn-secondary:last-child');
+  btn.textContent = '⏳ Generating...'; btn.disabled = true;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 200,
+        messages: [{ role: 'user', content: 'Write one original, beautiful, deeply meaningful quote about learning, wisdom, or intellectual growth. Make it poetic and memorable. Format ONLY as JSON: {"text":"...","author":"Original Thought"}' }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.[0]?.text?.replace(/```json|```/g,'').trim() || '{}';
+    const q = JSON.parse(raw);
+    const txt = document.getElementById('heroQuoteText');
+    const auth = document.getElementById('heroQuoteAuthor');
+    txt.style.opacity = 0; auth.style.opacity = 0;
+    setTimeout(() => {
+      txt.textContent = q.text || 'Keep seeking the light of knowledge.';
+      auth.textContent = `— ${q.author || 'A Scholar\'s Heart'}`;
+      document.getElementById('heroCategory').textContent = '✦ AI Generated';
+      txt.style.opacity = 1; auth.style.opacity = 1;
+    }, 400);
+  } catch(e) { showToast('Could not generate quote.'); }
+  btn.textContent = '🤖 AI Inspire Me'; btn.disabled = false;
+}
+
+function renderCatPills() {
+  document.getElementById('catPills').innerHTML = CATS.map(c => `
+    <button class="cat-pill ${c==='all'?'active':''}" onclick="filterCat('${c}',this)">${c.charAt(0).toUpperCase()+c.slice(1)}</button>
+  `).join('');
+}
+
+function filterCat(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderQuotesMasonry(cat);
+}
+
+function renderQuotesMasonry(cat) {
+  const filtered = cat === 'all' ? QUOTES : QUOTES.filter(q => q.cat === cat);
+  document.getElementById('quotesMasonry').innerHTML = filtered.map(q => `
+    <div class="quote-card" onclick="setHeroQuote(this)" data-text="${encodeURIComponent(q.text)}" data-author="${q.author}">
+      <span class="quote-card-cat">${q.cat}</span>
+      <p class="quote-card-text">${q.text}</p>
+      <p class="quote-card-author">— ${q.author}</p>
+    </div>
+  `).join('');
+}
+
+function setHeroQuote(el) {
+  const text = decodeURIComponent(el.dataset.text);
+  const author = el.dataset.author;
+  document.getElementById('heroQuoteText').textContent = text;
+  document.getElementById('heroQuoteAuthor').textContent = `— ${author}`;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderSavedQuotes() {
+  const saved = JSON.parse(localStorage.getItem('scholarium_saved_quotes') || '[]');
+  const section = document.getElementById('savedSection');
+  if (!saved.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  document.getElementById('savedMasonry').innerHTML = saved.map((q, i) => `
+    <div class="quote-card">
+      <button style="position:absolute;top:8px;right:8px;background:transparent;border:none;cursor:pointer;color:var(--text3);font-size:0.85rem" onclick="unsaveQuote(${i})">✕</button>
+      <p class="quote-card-text">${q.text}</p>
+      <p class="quote-card-author">— ${q.author}</p>
+    </div>
+  `).join('');
+}
+
+function unsaveQuote(i) {
+  let saved = JSON.parse(localStorage.getItem('scholarium_saved_quotes') || '[]');
+  saved.splice(i, 1);
+  localStorage.setItem('scholarium_saved_quotes', JSON.stringify(saved));
+  renderSavedQuotes();
+}
+
+function spawnParticles() {
+  const bg=document.getElementById('ambientBg');
+  for(let i=0;i<18;i++){const p=document.createElement('div');p.className='particle';p.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*8}s;animation-duration:${6+Math.random()*6}s;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;opacity:${0.1+Math.random()*0.3}`;bg.appendChild(p);}
+}
+</script>
+</body>
+</html>
