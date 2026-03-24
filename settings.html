@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Settings — Scholarium</title>
 <link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="shared.css">
@@ -63,6 +63,17 @@
 .about-content { padding:20px; }
 .about-content h3 { font-family:var(--font-display); font-size:1.3rem; color:var(--accent); margin-bottom:8px; }
 .about-content p { color:var(--text2); font-size:0.9rem; line-height:1.7; }
+
+@media (max-width: 540px) {
+  .theme-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .theme-preview { height: 55px; }
+  .theme-name { font-size: 0.75rem; padding: 6px; }
+  .setting-row { flex-wrap: wrap; gap: 10px; }
+  .setting-row .btn-secondary,
+  .setting-row .btn-danger { flex-shrink: 0; }
+  .setting-name { font-size: 0.88rem; }
+  .setting-desc { font-size: 0.75rem; }
+}
 </style>
 </head>
 <body>
@@ -71,13 +82,13 @@
   <nav class="nav-sidebar" id="navSidebar">
     <div class="nav-logo"><span class="nav-logo-icon">📚</span><span class="nav-logo-text">Scholarium</span></div>
     <ul class="nav-links">
-      <li><a href="index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Home</span></a></li>
-      <li><a href="streak.html" class="nav-link"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
-      <li><a href="pomodoro.html" class="nav-link"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
-      <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
-      <li><a href="todo.html" class="nav-link"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
-      <li><a href="inspire.html" class="nav-link"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
-      <li><a href="settings.html" class="nav-link active"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
+      <li><a href="index.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🏠</span><span>Home</span></a></li>
+      <li><a href="streak.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
+      <li><a href="pomodoro.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
+      <li><a href="analytics.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
+      <li><a href="todo.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
+      <li><a href="inspire.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
+      <li><a href="settings.html" class="nav-link active" onclick="closeNav()"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
     </ul>
     <div class="nav-streak-badge"><span class="streak-fire">🔥</span><span id="navStreakCount">0</span><span class="streak-label">day streak</span></div>
   </nav>
@@ -188,17 +199,34 @@
     </div>
   </main>
 </div>
+
+<!-- Nav overlay (mobile) -->
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- Bottom nav (mobile) -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="index.html" class="bottom-nav-item "><span class="bottom-nav-icon">🏠</span><span class="bottom-nav-label">Home</span></a>
+    <a href="streak.html" class="bottom-nav-item "><span class="bottom-nav-icon">🔥</span><span class="bottom-nav-label">Streak</span></a>
+    <a href="pomodoro.html" class="bottom-nav-item "><span class="bottom-nav-icon">🌳</span><span class="bottom-nav-label">Grove</span></a>
+    <a href="analytics.html" class="bottom-nav-item "><span class="bottom-nav-icon">📊</span><span class="bottom-nav-label">Stats</span></a>
+    <a href="todo.html" class="bottom-nav-item "><span class="bottom-nav-icon">✅</span><span class="bottom-nav-label">Tasks</span></a>
+    <a href="inspire.html" class="bottom-nav-item "><span class="bottom-nav-icon">✨</span><span class="bottom-nav-label">Inspire</span></a>
+    <a href="settings.html" class="bottom-nav-item active"><span class="bottom-nav-icon">⚙️</span><span class="bottom-nav-label">Settings</span></a>
+  </div>
+</nav>
+
 <script src="app.js"></script>
 <script>
 const THEMES = [
-  { id:'dark-academia', name:'Dark Academia', bg:'#1a1510', accent:'#c8956c', bar:'#c8956c' },
-  { id:'light-academia', name:'Light Academia', bg:'#f5f0e8', accent:'#8b5e3c', bar:'#8b5e3c' },
-  { id:'cottagecore', name:'Cottagecore', bg:'#1e1a14', accent:'#8fad7a', bar:'#8fad7a' },
-  { id:'indie', name:'Indie', bg:'#0f0f14', accent:'#c084fc', bar:'#c084fc' },
-  { id:'ethereal', name:'Ethereal', bg:'#f8f4ff', accent:'#9b59d0', bar:'#9b59d0' },
-  { id:'fairycore', name:'Fairycore', bg:'#fff8f0', accent:'#f08030', bar:'#f08030' },
-  { id:'witchy', name:'Witchy', bg:'#0d0810', accent:'#9d4edd', bar:'#9d4edd' },
-  { id:'galaxy', name:'Galaxy', bg:'#04060f', accent:'#4facfe', bar:'#4facfe' },
+  { id:'dark-academia',  name:'Dark Academia',  desc:'Candlelight & dusty tomes',    bg:'#110e0a', accent:'#d4924a', bar:'#d4924a' },
+  { id:'light-academia', name:'Light Academia', desc:'Morning libraries & parchment', bg:'#f2ead8', accent:'#7a4e28', bar:'#7a4e28' },
+  { id:'cottagecore',    name:'Cottagecore',    desc:'Moss, rain & wild herbs',       bg:'#0e130e', accent:'#7ec86e', bar:'#7ec86e' },
+  { id:'indie',          name:'Indie',          desc:'Neon signs & 2am vinyl',        bg:'#08080f', accent:'#e060f0', bar:'#e060f0' },
+  { id:'ethereal',       name:'Ethereal',       desc:'Quartz crystals & cloud temples',bg:'#f8f4ff',accent:'#8840d0', bar:'#8840d0' },
+  { id:'fairycore',      name:'Fairycore',      desc:'Golden hour & fireflies',       bg:'#0c0a04', accent:'#f8b820', bar:'#f8b820' },
+  { id:'witchy',         name:'Witchy',         desc:'Moonlit cauldrons & sigils',    bg:'#070510', accent:'#b040e0', bar:'#b040e0' },
+  { id:'galaxy',         name:'Galaxy',         desc:'Nebulae & cosmic void',         bg:'#020408', accent:'#38b0ff', bar:'#38b0ff' },
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -212,15 +240,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderThemeGrid() {
   const current = localStorage.getItem('scholarium_theme') || 'dark-academia';
-  document.getElementById('themeGrid').innerHTML = THEMES.map(t => `
-    <div class="theme-card ${t.id===current?'active':''}" onclick="applyThemeChoice('${t.id}')">
-      <div class="theme-preview" style="background:${t.bg}">
-        ${t.id===current?'<div class="theme-active-badge">✓</div>':''}
-        <div class="theme-preview-bar" style="background:${t.bar}"></div>
-      </div>
-      <div class="theme-name" style="background:${t.bg};color:${t.accent}">${t.name}</div>
-    </div>
-  `).join('');
+  document.getElementById('themeGrid').innerHTML = THEMES.map(t => {
+    return '<div class="theme-card ' + (t.id===current?'active':'') + '" onclick="applyThemeChoice(\'' + t.id + '\')">'
+      + '<div class="theme-preview" style="background:' + t.bg + '">'
+      + (t.id===current ? '<div class="theme-active-badge">✓</div>' : '')
+      + '<div style="position:absolute;top:8px;left:8px;width:28px;height:5px;border-radius:2px;background:' + t.accent + ';opacity:0.9"></div>'
+      + '<div style="position:absolute;top:18px;left:8px;width:40px;height:3px;border-radius:2px;background:' + t.accent + ';opacity:0.4"></div>'
+      + '<div style="position:absolute;top:26px;left:8px;width:32px;height:3px;border-radius:2px;background:' + t.accent + ';opacity:0.25"></div>'
+      + '<div style="position:absolute;bottom:8px;right:8px;width:22px;height:22px;border-radius:50%;background:' + t.bar + ';opacity:0.9;box-shadow:0 0 10px ' + t.bar + '"></div>'
+      + '</div>'
+      + '<div class="theme-name" style="background:' + t.bg + ';color:' + t.accent + '">' + t.name + '</div>'
+      + '<div class="theme-desc" style="background:' + t.bg + ';color:' + t.accent + ';opacity:0.55;font-size:0.7rem;padding:0 8px 8px;font-style:italic;font-family:var(--font-body)">' + t.desc + '</div>'
+      + '</div>';
+  }).join('');
 }
 
 function applyThemeChoice(themeId) {
