@@ -706,18 +706,247 @@ body {
 @keyframes toast-in { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes toast-out { from { opacity: 1; } to { opacity: 0; transform: translateX(40px); } }
 
-/* Responsive */
+/* =============================================
+   MOBILE BOTTOM NAV BAR
+   ============================================= */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--nav-bg);
+  border-top: 1px solid var(--border);
+  z-index: 200;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+}
+.bottom-nav-inner {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text3);
+  font-size: 0.6rem;
+  font-family: var(--font-ui);
+  letter-spacing: 0.04em;
+  transition: color 0.2s, background 0.2s;
+  min-width: 44px;
+}
+.bottom-nav-item.active { color: var(--accent); }
+.bottom-nav-item:active { background: var(--surface); }
+.bottom-nav-icon { font-size: 1.3rem; line-height: 1; }
+.bottom-nav-label { font-size: 0.58rem; }
+
+/* =============================================
+   TABLET — 861px and below
+   ============================================= */
 @media (max-width: 860px) {
-  .nav-sidebar { transform: translateX(-100%); }
-  .nav-sidebar.open { transform: translateX(0); }
+  /* Sidebar slides in as drawer */
+  .nav-sidebar {
+    transform: translateX(-100%);
+    box-shadow: none;
+    z-index: 300;
+    width: 260px;
+    transition: transform 0.35s cubic-bezier(.77,0,.18,1), box-shadow 0.35s;
+  }
+  .nav-sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 40px rgba(0,0,0,0.5);
+  }
+
+  /* Overlay when sidebar open */
+  .nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 299;
+    backdrop-filter: blur(2px);
+  }
+  .nav-overlay.active { display: block; }
+
   .hamburger { display: flex; }
-  .main-content { margin-left: 0; padding: 70px 20px 30px; }
-  .subjects-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .main-content {
+    margin-left: 0;
+    padding: 70px 20px 90px; /* bottom padding for bottom nav */
+  }
+  .subjects-grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 12px; }
+  .bottom-nav { display: block; }
+
+  /* Hero tweaks */
+  .hero-section { margin-bottom: 24px; padding-bottom: 24px; }
+  .hero-stats { gap: 16px; }
+
+  /* Section cards */
+  .section-card { padding: 20px; margin-bottom: 20px; }
+
+  /* Form rows stack nicely */
+  .form-row { flex-direction: column; gap: 10px; }
+  .emoji-input { max-width: 100%; flex: 1; }
+
+  /* Modal full-screen on tablet */
+  .modal-box {
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 16px 16px 0 0;
+    margin: auto 0 0;
+  }
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  /* Modal actions wrap better */
+  .modal-actions { gap: 6px; }
+  .btn-action { font-size: 0.82rem; padding: 8px 11px; }
 }
 
+/* =============================================
+   MOBILE — 540px and below
+   ============================================= */
 @media (max-width: 540px) {
-  .hero-title { font-size: 1.5rem; }
-  .modal-box { padding: 20px; }
-  .modal-actions { gap: 6px; }
-  .btn-action { font-size: 0.8rem; padding: 7px 10px; }
+  body { font-size: 15px; }
+
+  .main-content { padding: 60px 14px 88px; }
+
+  /* Hero */
+  .hero-title { font-size: 1.55rem; line-height: 1.25; }
+  .hero-sub { font-size: 0.9rem; }
+  .hero-stats { gap: 12px; }
+  .hero-stat-val { font-size: 1.4rem; }
+
+  /* Page header */
+  .page-header-title { font-size: 1.6rem; }
+  .page-header { margin-bottom: 24px; }
+
+  /* Cards */
+  .section-card { padding: 16px; border-radius: 12px; }
+  .section-title { font-size: 1.1rem; margin-bottom: 14px; }
+
+  /* Subjects grid — 2 columns on small phones */
+  .subjects-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .subject-card { padding: 14px; }
+  .subject-emoji { font-size: 1.5rem; }
+  .subject-name { font-size: 0.92rem; }
+
+  /* Add subject form */
+  .add-subject-form .form-row { flex-direction: column; }
+  .color-picker-row { flex-wrap: wrap; gap: 8px; }
+
+  /* Buttons */
+  .btn-primary { padding: 10px 18px; font-size: 0.9rem; }
+  .btn-secondary { padding: 8px 14px; font-size: 0.85rem; }
+
+  /* Modal */
+  .modal-box { padding: 18px; border-radius: 20px 20px 0 0; }
+  .modal-title { font-size: 1.2rem; }
+  .modal-subject-name { font-size: 1.15rem; }
+  .modal-actions { flex-wrap: wrap; }
+  .btn-action { font-size: 0.78rem; padding: 7px 9px; }
+  .btn-row-bottom { flex-direction: column; }
+  .btn-row-bottom .btn-primary,
+  .btn-row-bottom .btn-danger { width: 100%; text-align: center; }
+
+  /* Tabs */
+  .modal-tabs { gap: 2px; }
+  .modal-tab { font-size: 0.82rem; padding: 6px 10px; }
+
+  /* Materials */
+  .materials-add-row { flex-direction: column; }
+
+  /* Flashcard */
+  .flashcard { height: 170px; }
+  .flashcard-front, .flashcard-back { font-size: 0.95rem; padding: 16px; }
+
+  /* Toast */
+  .toast {
+    bottom: 80px; /* above bottom nav */
+    right: 14px;
+    left: 14px;
+    font-size: 0.85rem;
+  }
+
+  /* Hamburger */
+  .hamburger { top: 14px; left: 14px; }
+}
+
+/* =============================================
+   VERY SMALL — 380px and below
+   ============================================= */
+@media (max-width: 380px) {
+  .subjects-grid { grid-template-columns: 1fr 1fr; }
+  .hero-title { font-size: 1.35rem; }
+  .bottom-nav-label { display: none; }
+  .bottom-nav-icon { font-size: 1.5rem; }
+  .bottom-nav-item { padding: 8px 6px; }
+}
+
+/* =============================================
+   iOS & TOUCH OPTIMIZATIONS
+   ============================================= */
+
+/* Prevent iOS zoom on input focus (font-size must be >= 16px) */
+@media (max-width: 860px) {
+  input[type="text"],
+  input[type="url"],
+  input[type="number"],
+  input[type="date"],
+  input[type="email"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Safe area bottom for notched phones */
+.bottom-nav {
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+}
+.main-content {
+  padding-bottom: max(88px, calc(80px + env(safe-area-inset-bottom)));
+}
+@media (min-width: 861px) {
+  .main-content {
+    padding-bottom: 40px;
+  }
+}
+
+/* Smooth scrolling on iOS */
+.main-content,
+.modal-box {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Touch target sizing */
+.nav-link,
+.bottom-nav-item,
+.card-btn,
+.btn-primary,
+.btn-secondary,
+.btn-action,
+.modal-tab,
+.filter-tab,
+.pomo-tab {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Active press states for touch */
+.btn-primary:active { opacity: 0.85; transform: scale(0.98); }
+.btn-secondary:active { transform: scale(0.97); }
+.subject-card:active { transform: scale(0.98); }
+.quote-card:active { transform: scale(0.99); }
+
+/* Hamburger visible on small screens only */
+@media (min-width: 861px) {
+  .hamburger { display: none !important; }
+  .bottom-nav { display: none !important; }
 }
