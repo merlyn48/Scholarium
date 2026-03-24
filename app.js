@@ -112,7 +112,16 @@ function showToast(msg) {
 }
 
 function toggleNav() {
-  document.getElementById('navSidebar')?.classList.toggle('open');
+  const nav = document.getElementById('navSidebar');
+  const overlay = document.getElementById('navOverlay');
+  if (!nav) return;
+  const isOpen = nav.classList.toggle('open');
+  if (overlay) overlay.classList.toggle('active', isOpen);
+}
+
+function closeNav() {
+  document.getElementById('navSidebar')?.classList.remove('open');
+  document.getElementById('navOverlay')?.classList.remove('active');
 }
 
 function formatDate(iso) {
@@ -125,11 +134,7 @@ function formatMins(mins) {
   return `${Math.floor(mins/60)}h ${mins%60}m`;
 }
 
-// Click outside nav on mobile
-document.addEventListener('click', (e) => {
-  const nav = document.getElementById('navSidebar');
-  const ham = document.getElementById('hamburger');
-  if (nav && nav.classList.contains('open') && !nav.contains(e.target) && !ham?.contains(e.target)) {
-    nav.classList.remove('open');
-  }
+// Close nav on overlay click
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('navOverlay')?.addEventListener('click', closeNav);
 });
