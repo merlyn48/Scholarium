@@ -6,23 +6,322 @@
 <title>Focus Grove — Scholarium</title>
 <link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="shared.css">
-<link rel="stylesheet" href="pomodoro.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Playfair+Display:ital,wght@0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+/* ── Layout ── */
+.pomo-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* ── Left panel ── */
+.pomo-left {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px 22px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  position: sticky;
+  top: 20px;
+}
+
+.pomo-subject-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pomo-subject-label {
+  font-size: 0.8rem;
+  color: var(--text3);
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.fancy-select {
+  flex: 1;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.fancy-select:focus { border-color: var(--accent); }
+
+.pomo-mode-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg3);
+  border-radius: 10px;
+  padding: 4px;
+  width: 100%;
+}
+.pomo-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text3);
+  padding: 8px 6px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  transition: all 0.2s;
+}
+.pomo-tab.active {
+  background: var(--surface2);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* ── Ring timer ── */
+.pomo-ring-wrap {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pomo-ring {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+.ring-bg {
+  fill: none;
+  stroke: var(--bg3);
+  stroke-width: 10;
+}
+.ring-fill {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+.pomo-center-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 1;
+}
+.pomo-time-display {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text);
+  text-shadow: var(--hero-text-shadow);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.pomo-mode-label {
+  font-size: 0.72rem;
+  color: var(--text3);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: var(--font-ui);
+}
+
+.pomo-controls {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+.pomo-btn {
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+  padding: 12px;
+}
+.pomo-btn-main {
+  flex: 1;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 16px var(--glow);
+}
+.pomo-btn-main:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 6px 24px var(--glow); }
+.pomo-btn-reset {
+  background: var(--surface2);
+  color: var(--text2);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  font-size: 1rem;
+}
+.pomo-btn-reset:hover { background: var(--bg3); }
+
+.pomo-sessions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.pomo-session-label { font-size: 0.78rem; color: var(--text3); font-family: var(--font-ui); }
+.pomo-tomatoes { display: flex; flex-wrap: wrap; gap: 3px; }
+.tomato-icon { font-size: 1rem; animation: pop 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes pop { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+
+/* ── 3D Grove ── */
+.pomo-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.grove-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  position: relative;
+}
+
+.grove-header {
+  padding: 18px 22px 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.grove-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--text);
+}
+.grove-sub { font-size: 0.82rem; color: var(--text3); font-style: italic; }
+
+#groveCanvas3d {
+  display: block;
+  width: 100%;
+  height: 360px;
+  cursor: grab;
+}
+#groveCanvas3d:active { cursor: grabbing; }
+
+.grove-empty-overlay {
+  position: absolute;
+  inset: 60px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+.grove-empty-overlay.hidden { opacity: 0; }
+.grove-empty-icon { font-size: 2.5rem; margin-bottom: 8px; }
+.grove-empty-text { color: var(--text3); font-style: italic; font-size: 0.9rem; text-align: center; padding: 0 20px; }
+
+.grove-stats {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid var(--border);
+}
+.grove-stat {
+  flex: 1;
+  text-align: center;
+  padding: 14px 10px;
+  border-right: 1px solid var(--border);
+}
+.grove-stat:last-child { border-right: none; }
+.grove-stat-val {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+.grove-stat-lab { font-size: 0.72rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* Session log */
+.session-log-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: var(--card-shadow);
+}
+.session-log { display: flex; flex-direction: column; gap: 8px; }
+.session-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 14px;
+  animation: slide-in 0.3s ease;
+}
+@keyframes slide-in { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+.session-emoji { font-size: 1.2rem; }
+.session-info { flex: 1; }
+.session-subject { display: block; font-size: 0.9rem; color: var(--text); }
+.session-time { display: block; font-size: 0.78rem; color: var(--text3); }
+.session-badge {
+  background: var(--success);
+  color: #fff; border-radius: 20px;
+  padding: 3px 10px; font-size: 0.78rem;
+}
+
+/* Growing indicator */
+.growing-label {
+  position: absolute;
+  top: 70px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-size: 0.82rem;
+  color: var(--accent);
+  font-family: var(--font-ui);
+  letter-spacing: 0.06em;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 10;
+}
+.growing-label.visible { opacity: 1; }
+
+@media (max-width: 900px) {
+  .pomo-layout { grid-template-columns: 1fr; }
+  .pomo-left { position: static; }
+  #groveCanvas3d { height: 300px; }
+}
+</style>
 </head>
 <body>
 <div class="page-wrapper">
   <div class="ambient-bg" id="ambientBg"></div>
+  <div class="nav-overlay" id="navOverlay"></div>
   <nav class="nav-sidebar" id="navSidebar">
     <div class="nav-logo"><span class="nav-logo-icon">📚</span><span class="nav-logo-text">Scholarium</span></div>
     <ul class="nav-links">
-      <li><a href="index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Home</span></a></li>
-      <li><a href="streak.html" class="nav-link"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
-      <li><a href="pomodoro.html" class="nav-link active"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
-      <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
-      <li><a href="todo.html" class="nav-link"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
-      <li><a href="inspire.html" class="nav-link"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
-      <li><a href="settings.html" class="nav-link"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
+      <li><a href="index.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🏠</span><span>Home</span></a></li>
+      <li><a href="streak.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
+      <li><a href="pomodoro.html" class="nav-link active" onclick="closeNav()"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
+      <li><a href="analytics.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
+      <li><a href="todo.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
+      <li><a href="inspire.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
+      <li><a href="settings.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
     </ul>
     <div class="nav-streak-badge"><span class="streak-fire">🔥</span><span id="navStreakCount">0</span><span class="streak-label">day streak</span></div>
   </nav>
@@ -31,115 +330,424 @@
   <main class="main-content">
     <div class="page-header">
       <h1 class="page-header-title">🌳 Focus Grove</h1>
-      <p class="page-header-sub">Plant a tree with every session. Let your forest grow.</p>
+      <p class="page-header-sub">Every session plants a tree. Watch your forest grow.</p>
     </div>
 
     <div class="pomo-layout">
-      <!-- Timer Area -->
+      <!-- ── Timer Panel ── -->
       <div class="pomo-left">
-        <!-- Subject selector -->
         <div class="pomo-subject-row">
           <span class="pomo-subject-label">Studying:</span>
           <select id="subjectSelect" class="fancy-select">
-            <option value="">— Select a subject —</option>
+            <option value="">— Select subject —</option>
           </select>
         </div>
 
-        <!-- Mode tabs -->
         <div class="pomo-mode-tabs">
           <button class="pomo-tab active" onclick="setMode('focus', this)">Focus</button>
           <button class="pomo-tab" onclick="setMode('short', this)">Short Break</button>
           <button class="pomo-tab" onclick="setMode('long', this)">Long Break</button>
         </div>
 
-        <!-- Tree ring / timer -->
         <div class="pomo-ring-wrap">
-          <svg class="pomo-ring" viewBox="0 0 240 240">
-            <circle class="ring-bg" cx="120" cy="120" r="108"/>
-            <circle class="ring-fill" id="ringFill" cx="120" cy="120" r="108"
-              stroke-dasharray="678.6" stroke-dashoffset="678.6"/>
+          <svg class="pomo-ring" viewBox="0 0 220 220">
+            <circle class="ring-bg" cx="110" cy="110" r="98"/>
+            <circle class="ring-fill" id="ringFill" cx="110" cy="110" r="98"
+              stroke-dasharray="615.8" stroke-dashoffset="615.8"/>
           </svg>
-          <!-- Tree canvas inside -->
-          <div class="pomo-tree-container">
-            <canvas id="treeCanvas" width="160" height="160"></canvas>
+          <div class="pomo-center-info">
+            <div class="pomo-time-display" id="timerDisplay">25:00</div>
+            <div class="pomo-mode-label" id="modeLabel">Focus Session</div>
           </div>
-          <div class="pomo-time-display" id="timerDisplay">25:00</div>
-          <div class="pomo-mode-label" id="modeLabel">Focus Session</div>
         </div>
 
-        <!-- Controls -->
         <div class="pomo-controls">
-          <button class="pomo-btn pomo-btn-main" id="mainBtn" onclick="toggleTimer()">Start</button>
-          <button class="pomo-btn pomo-btn-reset" onclick="resetTimer()">↺ Reset</button>
+          <button class="pomo-btn pomo-btn-main" id="mainBtn" onclick="toggleTimer()">▶ Start</button>
+          <button class="pomo-btn pomo-btn-reset" onclick="resetTimer()" title="Reset">↺</button>
         </div>
 
-        <!-- Session counter -->
         <div class="pomo-sessions-row">
-          <span class="pomo-session-label">Sessions today:</span>
+          <span class="pomo-session-label">Today:</span>
           <div class="pomo-tomatoes" id="tomatoRow"></div>
         </div>
       </div>
 
-      <!-- Grove / Forest -->
+      <!-- ── 3D Grove ── -->
       <div class="pomo-right">
-        <h2 class="grove-title">Your Grove</h2>
-        <p class="grove-sub">Each tree = one completed focus session</p>
-        <div class="grove-canvas-wrap">
-          <canvas id="groveCanvas" width="440" height="300"></canvas>
-          <div class="grove-empty" id="groveEmpty">Plant your first tree by completing a session! 🌱</div>
+        <div class="grove-card">
+          <div class="grove-header">
+            <span class="grove-title">Your Grove</span>
+            <span class="grove-sub" id="groveSubText">Drag to rotate</span>
+          </div>
+          <canvas id="groveCanvas3d"></canvas>
+          <div class="growing-label" id="growingLabel">🌱 Tree is growing…</div>
+          <div class="grove-empty-overlay" id="groveEmpty">
+            <div class="grove-empty-icon">🌱</div>
+            <p class="grove-empty-text">Complete a focus session to plant your first tree</p>
+          </div>
+          <div class="grove-stats">
+            <div class="grove-stat"><span class="grove-stat-val" id="gsTrees">0</span><span class="grove-stat-lab">Trees Today</span></div>
+            <div class="grove-stat"><span class="grove-stat-val" id="gsFocus">0m</span><span class="grove-stat-lab">Focus Today</span></div>
+            <div class="grove-stat"><span class="grove-stat-val" id="gsTotal">0</span><span class="grove-stat-lab">All Trees</span></div>
+          </div>
         </div>
-        <div class="grove-stats">
-          <div class="grove-stat">
-            <span class="grove-stat-val" id="gsTrees">0</span>
-            <span class="grove-stat-lab">Trees Today</span>
-          </div>
-          <div class="grove-stat">
-            <span class="grove-stat-val" id="gsTotalTime">0m</span>
-            <span class="grove-stat-lab">Today's Focus</span>
-          </div>
-          <div class="grove-stat">
-            <span class="grove-stat-val" id="gsAllTrees">0</span>
-            <span class="grove-stat-lab">Total Trees</span>
-          </div>
+
+        <div class="session-log-card">
+          <h2 class="section-title">Today's Sessions</h2>
+          <div id="sessionLog" class="session-log"></div>
+          <div class="empty-state" id="sessionEmpty" style="display:none"><div class="empty-icon">⏱️</div><p>Start your first session!</p></div>
         </div>
       </div>
-    </div>
-
-    <!-- Today's Sessions Log -->
-    <div class="section-card" style="margin-top:32px">
-      <h2 class="section-title">Today's Session Log</h2>
-      <div id="sessionLog" class="session-log"></div>
-      <div class="empty-state" id="sessionEmpty" style="display:none"><div class="empty-icon">⏱️</div><p>No sessions yet today. Start focusing!</p></div>
     </div>
   </main>
 </div>
 
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="index.html" class="bottom-nav-item"><span class="bottom-nav-icon">🏠</span><span class="bottom-nav-label">Home</span></a>
+    <a href="streak.html" class="bottom-nav-item"><span class="bottom-nav-icon">🔥</span><span class="bottom-nav-label">Streak</span></a>
+    <a href="pomodoro.html" class="bottom-nav-item active"><span class="bottom-nav-icon">🌳</span><span class="bottom-nav-label">Grove</span></a>
+    <a href="analytics.html" class="bottom-nav-item"><span class="bottom-nav-icon">📊</span><span class="bottom-nav-label">Stats</span></a>
+    <a href="todo.html" class="bottom-nav-item"><span class="bottom-nav-icon">✅</span><span class="bottom-nav-label">Tasks</span></a>
+    <a href="inspire.html" class="bottom-nav-item"><span class="bottom-nav-icon">✨</span><span class="bottom-nav-label">Inspire</span></a>
+    <a href="settings.html" class="bottom-nav-item"><span class="bottom-nav-icon">⚙️</span><span class="bottom-nav-label">Settings</span></a>
+  </div>
+</nav>
+
 <script src="app.js"></script>
 <script>
-const RING_CIRCUMFERENCE = 678.6;
+// ══════════════════════════════════════════
+//  TIMER STATE
+// ══════════════════════════════════════════
+const RING_CIRC = 615.8;
 let timerInterval = null;
 let totalSecs = 25 * 60;
 let remainingSecs = totalSecs;
 let isRunning = false;
 let currentMode = 'focus';
-let todayTrees = 0;
-let allTrees = [];
-let sessionCount = 0;
-const TREE_TYPES = ['🌲','🌳','🌴','🍀','🌺','🌸','🌻','🌿','🪴','🌵'];
+let durations = { focus: 25, short: 5, long: 15 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  applyTheme();
-  checkAndUpdateStreak();
-  document.getElementById('navStreakCount').textContent = getStreak();
-  spawnParticles();
-  loadSettings();
-  populateSubjects();
-  loadTodayData();
-  renderGrove();
-  renderSessionLog();
-  checkPreloadedSubject();
-});
+// ══════════════════════════════════════════
+//  THREE.JS GROVE
+// ══════════════════════════════════════════
+let scene, camera, renderer, clock;
+let groundMesh, skyColor;
+let grove3dTrees = [];      // completed trees in scene
+let growingTree = null;     // the one currently growing
+let growingProgress = 0;    // 0..1
+let orbitAngle = 0;
+let isDragging = false;
+let lastMouseX = 0;
+let cameraRadius = 14;
+let cameraHeight = 6;
+let animFrameId = null;
 
+function getCSSVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function hexToThree(hex) {
+  return new THREE.Color(hex || '#4a7a50');
+}
+
+function initThreeJS() {
+  const canvas = document.getElementById('groveCanvas3d');
+  const W = canvas.offsetWidth || 600;
+  const H = 360;
+
+  // Scene
+  scene = new THREE.Scene();
+  clock = new THREE.Clock();
+
+  // Sky bg
+  const skyHex = getCSSVar('--sky-color') || '#1a1208';
+  scene.background = new THREE.Color(skyHex);
+  scene.fog = new THREE.Fog(skyHex, 18, 40);
+
+  // Camera
+  camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
+  camera.position.set(0, cameraHeight, cameraRadius);
+  camera.lookAt(0, 1, 0);
+
+  // Renderer
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setSize(W, H);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  // Lights
+  const ambient = new THREE.AmbientLight(0xffffff, 0.45);
+  scene.add(ambient);
+
+  const sun = new THREE.DirectionalLight(0xfff4e0, 1.1);
+  sun.position.set(8, 12, 6);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.camera.near = 0.5;
+  sun.shadow.camera.far = 50;
+  sun.shadow.camera.left = -15;
+  sun.shadow.camera.right = 15;
+  sun.shadow.camera.top = 15;
+  sun.shadow.camera.bottom = -15;
+  scene.add(sun);
+
+  const fill = new THREE.DirectionalLight(0x8080ff, 0.2);
+  fill.position.set(-6, 4, -4);
+  scene.add(fill);
+
+  // Ground
+  buildGround();
+
+  // Stars (for dark themes)
+  buildStars();
+
+  // Load existing today's trees
+  const today = new Date().toISOString().slice(0, 10);
+  const trees = getTreesData();
+  const entry = trees.find(t => t.date === today);
+  if (entry && entry.trees && entry.trees.length) {
+    entry.trees.forEach((t, i) => {
+      addCompletedTree(i, entry.trees.length);
+    });
+    document.getElementById('groveEmpty').classList.add('hidden');
+  }
+
+  // Mouse drag
+  canvas.addEventListener('mousedown', e => { isDragging = true; lastMouseX = e.clientX; });
+  canvas.addEventListener('touchstart', e => { isDragging = true; lastMouseX = e.touches[0].clientX; });
+  window.addEventListener('mouseup', () => { isDragging = false; });
+  window.addEventListener('touchend', () => { isDragging = false; });
+  canvas.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    orbitAngle -= (e.clientX - lastMouseX) * 0.01;
+    lastMouseX = e.clientX;
+  });
+  canvas.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    orbitAngle -= (e.touches[0].clientX - lastMouseX) * 0.01;
+    lastMouseX = e.touches[0].clientX;
+  });
+  canvas.addEventListener('wheel', e => {
+    cameraRadius = Math.max(6, Math.min(22, cameraRadius + e.deltaY * 0.02));
+  });
+
+  // Resize
+  window.addEventListener('resize', () => {
+    const w2 = canvas.offsetWidth;
+    renderer.setSize(w2, H);
+    camera.aspect = w2 / H;
+    camera.updateProjectionMatrix();
+  });
+
+  animFrameId = requestAnimationFrame(animateGrove);
+}
+
+function buildGround() {
+  // Main ground disc
+  const groundColor = getCSSVar('--ground-color') || '#2a1e0e';
+  const geo = new THREE.CylinderGeometry(12, 12, 0.3, 64);
+  const mat = new THREE.MeshLambertMaterial({ color: new THREE.Color(groundColor) });
+  groundMesh = new THREE.Mesh(geo, mat);
+  groundMesh.position.y = -0.15;
+  groundMesh.receiveShadow = true;
+  scene.add(groundMesh);
+
+  // Grass ring highlight
+  const ringGeo = new THREE.RingGeometry(0, 11.5, 64);
+  const ringMat = new THREE.MeshLambertMaterial({
+    color: new THREE.Color(groundColor).multiplyScalar(1.3),
+    side: THREE.DoubleSide,
+  });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = 0.01;
+  scene.add(ring);
+
+  // Small rocks
+  for (let i = 0; i < 12; i++) {
+    const r = 3 + Math.random() * 7;
+    const a = Math.random() * Math.PI * 2;
+    const rGeo = new THREE.SphereGeometry(0.08 + Math.random() * 0.15, 6, 5);
+    const rMat = new THREE.MeshLambertMaterial({ color: 0x554433 });
+    const rock = new THREE.Mesh(rGeo, rMat);
+    rock.position.set(Math.cos(a) * r, 0.05, Math.sin(a) * r);
+    rock.rotation.set(Math.random(), Math.random(), Math.random());
+    scene.add(rock);
+  }
+}
+
+function buildStars() {
+  const theme = localStorage.getItem('scholarium_theme') || 'dark-academia';
+  const darkThemes = ['dark-academia','cottagecore','indie','witchy','galaxy','fairycore'];
+  if (!darkThemes.includes(theme)) return;
+  const geo = new THREE.BufferGeometry();
+  const count = 200;
+  const pos = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.random() * Math.PI * 0.5;
+    const r = 28 + Math.random() * 8;
+    pos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+    pos[i*3+1] = 5 + r * Math.cos(phi);
+    pos[i*3+2] = r * Math.sin(phi) * Math.sin(theta);
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.12, sizeAttenuation: true });
+  scene.add(new THREE.Points(geo, mat));
+}
+
+function getTreePosition(idx, total) {
+  // Spiral layout in the grove
+  if (total <= 1) return { x: 0, z: 0 };
+  const spiralStep = 1.8;
+  const goldenAngle = 2.399963;
+  const r = spiralStep * Math.sqrt(idx);
+  const angle = idx * goldenAngle;
+  return { x: Math.cos(angle) * r, z: Math.sin(angle) * r };
+}
+
+function makeTreeGroup(progress) {
+  // progress 0..1
+  const group = new THREE.Group();
+  const trunkColor = hexToThree(getCSSVar('--tree-trunk') || '#7a5c30');
+  const foliageColor = hexToThree(getCSSVar('--tree-foliage') || '#4a7a50');
+  const foliageColor2 = foliageColor.clone().multiplyScalar(1.3);
+  const foliageColor3 = foliageColor.clone().multiplyScalar(0.75);
+
+  const trunkH = 0.3 + progress * 1.8;
+  const trunkR = 0.06 + progress * 0.08;
+  const foliageR = progress * 0.85;
+
+  // Trunk
+  const tGeo = new THREE.CylinderGeometry(trunkR * 0.6, trunkR, trunkH, 8);
+  const tMat = new THREE.MeshLambertMaterial({ color: trunkColor });
+  const trunk = new THREE.Mesh(tGeo, tMat);
+  trunk.position.y = trunkH / 2;
+  trunk.castShadow = true;
+  group.add(trunk);
+
+  if (progress > 0.05 && foliageR > 0.05) {
+    // Main foliage sphere
+    const fGeo = new THREE.SphereGeometry(foliageR, 10, 8);
+    const fMat = new THREE.MeshLambertMaterial({ color: foliageColor });
+    const foliage = new THREE.Mesh(fGeo, fMat);
+    foliage.position.y = trunkH + foliageR * 0.6;
+    foliage.castShadow = true;
+    group.add(foliage);
+
+    if (progress > 0.3) {
+      // Side puffs
+      const puff = (ox, oy, oz, scale, col) => {
+        const pg = new THREE.SphereGeometry(foliageR * scale, 8, 6);
+        const pm = new THREE.MeshLambertMaterial({ color: col });
+        const p = new THREE.Mesh(pg, pm);
+        p.position.set(ox, trunkH + oy, oz);
+        p.castShadow = true;
+        group.add(p);
+      };
+      const s = foliageR;
+      puff(-s * 0.65, s * 0.3, 0, 0.7, foliageColor2);
+      puff( s * 0.65, s * 0.3, 0, 0.7, foliageColor3);
+      puff(0, s * 0.2, -s * 0.65, 0.65, foliageColor2);
+      puff(0, s * 0.1,  s * 0.65, 0.65, foliageColor3);
+    }
+
+    if (progress > 0.6) {
+      // Top puff
+      const tpGeo = new THREE.SphereGeometry(foliageR * 0.55, 8, 6);
+      const tpMat = new THREE.MeshLambertMaterial({ color: foliageColor2 });
+      const tp = new THREE.Mesh(tpGeo, tpMat);
+      tp.position.y = trunkH + foliageR * 1.3;
+      tp.castShadow = true;
+      group.add(tp);
+    }
+  }
+
+  return group;
+}
+
+function addCompletedTree(idx, total) {
+  const pos = getTreePosition(idx, total);
+  const tree = makeTreeGroup(1.0);
+  tree.position.set(pos.x, 0, pos.z);
+  // Slight random rotation for variety
+  tree.rotation.y = Math.random() * Math.PI * 2;
+  scene.add(tree);
+  grove3dTrees.push(tree);
+  return tree;
+}
+
+function startGrowingTree() {
+  // Remove old growing tree if any
+  if (growingTree) { scene.remove(growingTree); growingTree = null; }
+  growingProgress = 0;
+  const idx = grove3dTrees.length; // will be the next tree
+  const total = idx + 1;
+  const pos = getTreePosition(idx, total);
+  growingTree = makeTreeGroup(0.01);
+  growingTree.position.set(pos.x, 0, pos.z);
+  growingTree.rotation.y = Math.random() * Math.PI * 2;
+  scene.add(growingTree);
+  document.getElementById('groveEmpty').classList.add('hidden');
+  document.getElementById('growingLabel').classList.add('visible');
+}
+
+function updateGrowingTree(progress) {
+  if (!growingTree) return;
+  growingProgress = progress;
+  // Rebuild the tree geometry with new progress
+  scene.remove(growingTree);
+  const idx = grove3dTrees.length;
+  const total = idx + 1;
+  const pos = getTreePosition(idx, total);
+  growingTree = makeTreeGroup(Math.max(0.01, progress));
+  growingTree.position.set(pos.x, 0, pos.z);
+  scene.add(growingTree);
+}
+
+function finalizeGrowingTree() {
+  if (!growingTree) return;
+  // Replace with fully grown tree
+  scene.remove(growingTree);
+  const idx = grove3dTrees.length;
+  const total = idx + 1;
+  addCompletedTree(idx, total);
+  growingTree = null;
+  document.getElementById('growingLabel').classList.remove('visible');
+
+  // Reposition ALL trees for new total
+  grove3dTrees.forEach((t, i) => {
+    const pos = getTreePosition(i, grove3dTrees.length);
+    t.position.set(pos.x, 0, pos.z);
+  });
+}
+
+let autoRotate = true;
+
+function animateGrove() {
+  animFrameId = requestAnimationFrame(animateGrove);
+  const dt = clock.getDelta();
+
+  // Auto-rotate when not dragging
+  if (!isDragging && autoRotate) {
+    orbitAngle += dt * 0.12;
+  }
+
+  camera.position.x = Math.sin(orbitAngle) * cameraRadius;
+  camera.position.z = Math.cos(orbitAngle) * cameraRadius;
+  camera.position.y = cameraHeight;
+  camera.lookAt(0, 1.2, 0);
+
+  // Gentle sway on growing tree
+  if (growingTree && isRunning) {
+    growingTree.rotation.z = Math.sin(Date.now() * 0.001) * 0.02;
+  }
+
+  renderer.render(scene, camera);
+}
+
+// ══════════════════════════════════════════
+//  TIMER LOGIC
+// ══════════════════════════════════════════
 function loadSettings() {
   const s = getSettings();
   durations = { focus: s.pomoDuration || 25, short: s.shortBreak || 5, long: s.longBreak || 15 };
@@ -148,18 +756,166 @@ function loadSettings() {
   updateDisplay();
 }
 
-let durations = { focus: 25, short: 5, long: 15 };
+function setMode(mode, btn) {
+  if (isRunning) return;
+  currentMode = mode;
+  document.querySelectorAll('.pomo-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  totalSecs = durations[mode] * 60;
+  remainingSecs = totalSecs;
+  const labels = { focus:'Focus Session', short:'Short Break', long:'Long Break' };
+  document.getElementById('modeLabel').textContent = labels[mode];
+  updateDisplay();
+  updateRing();
+  if (mode === 'focus' && !growingTree) startGrowingTree();
+}
 
-function checkPreloadedSubject() {
-  const ps = localStorage.getItem('pomodoroSubject');
-  if (ps) {
-    try {
-      const { id } = JSON.parse(ps);
-      const sel = document.getElementById('subjectSelect');
-      if (sel) sel.value = id;
-    } catch(e) {}
-    localStorage.removeItem('pomodoroSubject');
+function toggleTimer() {
+  if (isRunning) { pauseTimer(); } else { startTimer(); }
+}
+
+function startTimer() {
+  if (currentMode === 'focus') {
+    if (!document.getElementById('subjectSelect').value) { showToast('Please select a subject first!'); return; }
+    if (!growingTree) startGrowingTree();
+    autoRotate = false; // let user see the tree
   }
+  isRunning = true;
+  document.getElementById('mainBtn').textContent = '⏸ Pause';
+  timerInterval = setInterval(tick, 1000);
+}
+
+function pauseTimer() {
+  isRunning = false;
+  document.getElementById('mainBtn').textContent = '▶ Resume';
+  clearInterval(timerInterval);
+  autoRotate = true;
+}
+
+function resetTimer() {
+  isRunning = false;
+  clearInterval(timerInterval);
+  totalSecs = durations[currentMode] * 60;
+  remainingSecs = totalSecs;
+  document.getElementById('mainBtn').textContent = '▶ Start';
+  updateDisplay();
+  updateRing();
+  autoRotate = true;
+  // Remove any in-progress tree
+  if (growingTree) { scene.remove(growingTree); growingTree = null; }
+  document.getElementById('growingLabel').classList.remove('visible');
+  if (!grove3dTrees.length) document.getElementById('groveEmpty').classList.remove('hidden');
+}
+
+function tick() {
+  remainingSecs--;
+  updateDisplay();
+  const progress = 1 - remainingSecs / totalSecs;
+  updateRing();
+  if (currentMode === 'focus' && growingTree) {
+    updateGrowingTree(progress);
+  }
+  if (remainingSecs <= 0) {
+    clearInterval(timerInterval);
+    isRunning = false;
+    onSessionComplete();
+  }
+}
+
+function updateDisplay() {
+  const m = Math.floor(remainingSecs/60).toString().padStart(2,'0');
+  const s = (remainingSecs%60).toString().padStart(2,'0');
+  document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+  document.title = `${m}:${s} — Scholarium`;
+}
+
+function updateRing() {
+  const progress = 1 - remainingSecs / totalSecs;
+  document.getElementById('ringFill').style.strokeDashoffset = RING_CIRC * (1 - progress);
+}
+
+function onSessionComplete() {
+  document.getElementById('mainBtn').textContent = '▶ Start';
+  autoRotate = true;
+  if (currentMode === 'focus') {
+    const sel = document.getElementById('subjectSelect');
+    const subjects = getSubjects();
+    const s = subjects.find(x => x.id === sel.value);
+    const mins = durations.focus;
+
+    // Log session to storage
+    logSession(sel.value, s?.name || 'Unknown', mins, s?.emoji || '📚');
+
+    // Add tree to persisted data
+    const today = new Date().toISOString().slice(0, 10);
+    const trees = getTreesData();
+    let entry = trees.find(t => t.date === today);
+    if (!entry) { entry = { date: today, minutes: 0, trees: [] }; trees.push(entry); }
+    entry.trees = entry.trees || [];
+    entry.trees.push({ ts: Date.now() });
+    saveTreesData(trees);
+
+    // Finalize 3D tree
+    finalizeGrowingTree();
+
+    // Update UI
+    loadTodayData();
+    renderTomatoes();
+    renderSessionLog();
+    playBell();
+    showToast(`🌳 Tree planted! +${mins} minutes logged.`);
+
+    // Start break prompt
+    setTimeout(() => {
+      setMode('short', document.querySelectorAll('.pomo-tab')[1]);
+    }, 2000);
+  } else {
+    showToast('Break over! Time to focus. 🎯');
+    setMode('focus', document.querySelector('.pomo-tab'));
+  }
+}
+
+// ══════════════════════════════════════════
+//  UI HELPERS
+// ══════════════════════════════════════════
+function loadTodayData() {
+  const today = new Date().toISOString().slice(0, 10);
+  const trees = getTreesData();
+  const entry = trees.find(t => t.date === today);
+  const todayTrees = entry?.trees?.length || 0;
+  const todayMins = entry?.minutes || 0;
+  const allTrees = trees.reduce((a,t) => a + (t.trees?.length || 0), 0);
+  document.getElementById('gsTrees').textContent = todayTrees;
+  document.getElementById('gsFocus').textContent = formatMins(todayMins);
+  document.getElementById('gsTotal').textContent = allTrees;
+}
+
+function renderTomatoes() {
+  const today = new Date().toISOString().slice(0, 10);
+  const trees = getTreesData();
+  const entry = trees.find(t => t.date === today);
+  const count = entry?.trees?.length || 0;
+  document.getElementById('tomatoRow').innerHTML = Array.from({length: count}, () =>
+    '<span class="tomato-icon">🍅</span>').join('');
+}
+
+function renderSessionLog() {
+  const today = new Date().toISOString().slice(0, 10);
+  const sessions = getSessions().filter(s => s.date === today).reverse();
+  const log = document.getElementById('sessionLog');
+  const empty = document.getElementById('sessionEmpty');
+  if (!sessions.length) { log.innerHTML = ''; empty.style.display='flex'; return; }
+  empty.style.display='none';
+  log.innerHTML = sessions.map(s => `
+    <div class="session-item">
+      <span class="session-emoji">${s.emoji||'📚'}</span>
+      <div class="session-info">
+        <span class="session-subject">${s.subjectName}</span>
+        <span class="session-time">${formatMins(s.minutes)} focus session</span>
+      </div>
+      <span class="session-badge">+${s.minutes}m</span>
+    </div>
+  `).join('');
 }
 
 function populateSubjects() {
@@ -171,248 +927,12 @@ function populateSubjects() {
     opt.textContent = `${s.emoji} ${s.name}`;
     sel.appendChild(opt);
   });
-}
-
-function setMode(mode, btn) {
-  if (isRunning) return;
-  currentMode = mode;
-  document.querySelectorAll('.pomo-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  totalSecs = durations[mode] * 60;
-  remainingSecs = totalSecs;
-  const labels = { focus: 'Focus Session', short: 'Short Break', long: 'Long Break' };
-  document.getElementById('modeLabel').textContent = labels[mode];
-  updateDisplay();
-  updateRing();
-  if (mode === 'focus') growTree(0);
-}
-
-function toggleTimer() {
-  if (isRunning) {
-    pauseTimer();
-  } else {
-    startTimer();
+  // Check preloaded subject from home page
+  const ps = localStorage.getItem('pomodoroSubject');
+  if (ps) {
+    try { sel.value = JSON.parse(ps).id; } catch(e) {}
+    localStorage.removeItem('pomodoroSubject');
   }
-}
-
-function startTimer() {
-  if (currentMode === 'focus') {
-    const sel = document.getElementById('subjectSelect');
-    if (!sel.value) { showToast('Please select a subject first!'); return; }
-  }
-  isRunning = true;
-  document.getElementById('mainBtn').textContent = 'Pause';
-  timerInterval = setInterval(tick, 1000);
-}
-
-function pauseTimer() {
-  isRunning = false;
-  document.getElementById('mainBtn').textContent = 'Resume';
-  clearInterval(timerInterval);
-}
-
-function resetTimer() {
-  isRunning = false;
-  clearInterval(timerInterval);
-  totalSecs = durations[currentMode] * 60;
-  remainingSecs = totalSecs;
-  document.getElementById('mainBtn').textContent = 'Start';
-  updateDisplay();
-  updateRing();
-  if (currentMode === 'focus') growTree(0);
-}
-
-function tick() {
-  remainingSecs--;
-  updateDisplay();
-  updateRing();
-  const progress = 1 - remainingSecs / totalSecs;
-  if (currentMode === 'focus') growTree(progress);
-  if (remainingSecs <= 0) {
-    clearInterval(timerInterval);
-    isRunning = false;
-    onSessionComplete();
-  }
-}
-
-function updateDisplay() {
-  const m = Math.floor(remainingSecs / 60).toString().padStart(2, '0');
-  const s = (remainingSecs % 60).toString().padStart(2, '0');
-  document.getElementById('timerDisplay').textContent = `${m}:${s}`;
-  document.title = `${m}:${s} — Scholarium`;
-}
-
-function updateRing() {
-  const progress = 1 - remainingSecs / totalSecs;
-  const offset = RING_CIRCUMFERENCE * (1 - progress);
-  document.getElementById('ringFill').style.strokeDashoffset = offset;
-}
-
-function onSessionComplete() {
-  document.getElementById('mainBtn').textContent = 'Start';
-  if (currentMode === 'focus') {
-    sessionCount++;
-    const sel = document.getElementById('subjectSelect');
-    const subjects = getSubjects();
-    const s = subjects.find(x => x.id === sel.value);
-    const mins = durations.focus;
-    logSession(sel.value, s?.name || 'Unknown', mins, s?.emoji || '📚');
-    // add tree to grove
-    const today = new Date().toISOString().slice(0, 10);
-    const trees = getTreesData();
-    const entry = trees.find(t => t.date === today) || { date: today, minutes: 0, trees: [] };
-    if (!trees.find(t => t.date === today)) trees.push(entry);
-    entry.trees = entry.trees || [];
-    entry.trees.push({ type: TREE_TYPES[Math.floor(Math.random() * TREE_TYPES.length)], ts: Date.now() });
-    saveTreesData(trees);
-    loadTodayData();
-    renderGrove();
-    renderTomatoes();
-    renderSessionLog();
-    showToast(`🌳 Session complete! +${mins} minutes logged.`);
-    playBell();
-  } else {
-    showToast('Break over! Ready to focus? 🎯');
-    setMode('focus', document.querySelector('.pomo-tab'));
-  }
-}
-
-function loadTodayData() {
-  const today = new Date().toISOString().slice(0, 10);
-  const trees = getTreesData();
-  const entry = trees.find(t => t.date === today);
-  todayTrees = entry?.trees?.length || 0;
-  const todayMins = entry?.minutes || 0;
-  document.getElementById('gsTrees').textContent = todayTrees;
-  document.getElementById('gsTotalTime').textContent = formatMins(todayMins);
-  const allT = trees.reduce((a, t) => a + (t.trees?.length || 0), 0);
-  document.getElementById('gsAllTrees').textContent = allT;
-  renderTomatoes();
-}
-
-function renderTomatoes() {
-  const row = document.getElementById('tomatoRow');
-  row.innerHTML = '';
-  for (let i = 0; i < todayTrees; i++) {
-    const t = document.createElement('span');
-    t.textContent = '🍅';
-    t.className = 'tomato-icon';
-    row.appendChild(t);
-  }
-}
-
-// ---- TREE CANVAS (grows during session) ----
-function growTree(progress) {
-  const canvas = document.getElementById('treeCanvas');
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, 160, 160);
-  if (progress <= 0) { drawSeedling(ctx); return; }
-  drawGrowingTree(ctx, progress);
-}
-
-function drawSeedling(ctx) {
-  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#c8956c';
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(80, 130); ctx.lineTo(80, 110); ctx.stroke();
-  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || '#7b9e8e';
-  ctx.beginPath(); ctx.arc(80, 105, 6, 0, Math.PI*2); ctx.fill();
-}
-
-function drawGrowingTree(ctx, progress) {
-  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#c8956c';
-  const successColor = getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || '#7b9e8e';
-  const trunkHeight = Math.floor(20 + progress * 55);
-  const startY = 145;
-  // Trunk
-  ctx.strokeStyle = accentColor;
-  ctx.lineWidth = 3 + progress * 3;
-  ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(80, startY); ctx.lineTo(80, startY - trunkHeight); ctx.stroke();
-  // Branches
-  if (progress > 0.2) {
-    const bl = progress * 30;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(80, startY - trunkHeight * 0.7); ctx.lineTo(80 - bl, startY - trunkHeight * 0.7 - bl * 0.7); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(80, startY - trunkHeight * 0.7); ctx.lineTo(80 + bl, startY - trunkHeight * 0.7 - bl * 0.7); ctx.stroke();
-  }
-  if (progress > 0.5) {
-    const bl2 = progress * 22;
-    ctx.beginPath(); ctx.moveTo(80, startY - trunkHeight * 0.5); ctx.lineTo(80 - bl2, startY - trunkHeight * 0.5 - bl2 * 0.6); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(80, startY - trunkHeight * 0.5); ctx.lineTo(80 + bl2, startY - trunkHeight * 0.5 - bl2 * 0.6); ctx.stroke();
-  }
-  // Foliage
-  if (progress > 0.1) {
-    const fsize = Math.floor(10 + progress * 35);
-    ctx.fillStyle = successColor;
-    ctx.globalAlpha = 0.3 + progress * 0.5;
-    ctx.beginPath(); ctx.arc(80, startY - trunkHeight - fsize * 0.5, fsize, 0, Math.PI*2); ctx.fill();
-    if (progress > 0.3) {
-      ctx.beginPath(); ctx.arc(80 - fsize * 0.6, startY - trunkHeight - fsize * 0.2, fsize * 0.7, 0, Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(80 + fsize * 0.6, startY - trunkHeight - fsize * 0.2, fsize * 0.7, 0, Math.PI*2); ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-  }
-}
-
-// ---- GROVE CANVAS ----
-function renderGrove() {
-  const today = new Date().toISOString().slice(0, 10);
-  const trees = getTreesData();
-  const entry = trees.find(t => t.date === today);
-  const treeList = entry?.trees || [];
-  const canvas = document.getElementById('groveCanvas');
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, 440, 300);
-  const empty = document.getElementById('groveEmpty');
-  if (!treeList.length) { empty.style.display = 'flex'; return; }
-  empty.style.display = 'none';
-  // Draw ground
-  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#4a3f32';
-  ctx.fillStyle = accentColor;
-  ctx.globalAlpha = 0.3;
-  ctx.fillRect(0, 255, 440, 2);
-  ctx.globalAlpha = 1;
-  // Draw trees
-  treeList.forEach((tree, i) => {
-    const x = 40 + (i % 8) * 52;
-    const y = 240 + Math.floor(i / 8) * (-30);
-    drawGroveTree(ctx, x, y, tree.type);
-  });
-}
-
-function drawGroveTree(ctx, x, y, emoji) {
-  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent3').trim() || '#9b7a58';
-  const successColor = getComputedStyle(document.documentElement).getPropertyValue('--success').trim() || '#7b9e8e';
-  // Trunk
-  ctx.strokeStyle = accentColor;
-  ctx.lineWidth = 3; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 30); ctx.stroke();
-  // Foliage
-  ctx.fillStyle = successColor;
-  ctx.globalAlpha = 0.85;
-  ctx.beginPath(); ctx.arc(x, y - 38, 14, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(x-9, y-30, 10, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(x+9, y-30, 10, 0, Math.PI*2); ctx.fill();
-  ctx.globalAlpha = 1;
-}
-
-function renderSessionLog() {
-  const today = new Date().toISOString().slice(0, 10);
-  const sessions = getSessions().filter(s => s.date === today).reverse();
-  const log = document.getElementById('sessionLog');
-  const empty = document.getElementById('sessionEmpty');
-  if (!sessions.length) { log.innerHTML = ''; empty.style.display = 'flex'; return; }
-  empty.style.display = 'none';
-  log.innerHTML = sessions.map(s => `
-    <div class="session-item">
-      <span class="session-emoji">${s.emoji || '📚'}</span>
-      <div class="session-info">
-        <span class="session-subject">${s.subjectName}</span>
-        <span class="session-time">${formatMins(s.minutes)} focus session</span>
-      </div>
-      <span class="session-badge">+${s.minutes}m</span>
-    </div>
-  `).join('');
 }
 
 function playBell() {
@@ -420,13 +940,17 @@ function playBell() {
   if (!s.soundEnabled) return;
   try {
     const ctx2 = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx2.createOscillator();
-    const gain = ctx2.createGain();
-    osc.connect(gain); gain.connect(ctx2.destination);
-    osc.type = 'sine'; osc.frequency.value = 660;
-    gain.gain.setValueAtTime(0.4, ctx2.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + 1.5);
-    osc.start(); osc.stop(ctx2.currentTime + 1.5);
+    [660, 880, 1100].forEach((freq, i) => {
+      const osc = ctx2.createOscillator();
+      const gain = ctx2.createGain();
+      osc.connect(gain); gain.connect(ctx2.destination);
+      osc.type = 'sine'; osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, ctx2.currentTime + i * 0.3);
+      gain.gain.linearRampToValueAtTime(0.3, ctx2.currentTime + i * 0.3 + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx2.currentTime + i * 0.3 + 1.2);
+      osc.start(ctx2.currentTime + i * 0.3);
+      osc.stop(ctx2.currentTime + i * 0.3 + 1.2);
+    });
   } catch(e) {}
 }
 
@@ -439,6 +963,34 @@ function spawnParticles() {
     bg.appendChild(p);
   }
 }
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  applyTheme();
+  checkAndUpdateStreak();
+  document.getElementById('navStreakCount').textContent = getStreak();
+  loadSettings();
+  populateSubjects();
+  loadTodayData();
+  renderTomatoes();
+  renderSessionLog();
+  spawnParticles();
+  initThreeJS();
+  // Start with a seedling visible if no trees yet
+  const today = new Date().toISOString().slice(0, 10);
+  const trees = getTreesData();
+  const entry = trees.find(t => t.date === today);
+  if (!entry || !entry.trees || !entry.trees.length) {
+    setTimeout(startGrowingTree, 500);
+  }
+});
+
+// Nav overlay
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('navOverlay')?.addEventListener('click', closeNav);
+});
 </script>
 </body>
 </html>
