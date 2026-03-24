@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Analytics — Scholarium</title>
 <link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="shared.css">
@@ -43,6 +43,25 @@
 .hm-cell.hm-4 { background:var(--accent2); opacity:1; }
 .hm-legend { display:flex; align-items:center; gap:6px; margin-top:8px; font-size:0.78rem; color:var(--text3); }
 .hm-legend-cell { width:14px; height:14px; border-radius:2px; }
+
+@media (max-width: 540px) {
+  .analytics-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stat-tile { padding: 14px; }
+  .stat-tile-icon { font-size: 1.4rem; }
+  .stat-tile-val { font-size: 1.3rem; }
+  .bar-chart { height: 150px; gap: 5px; }
+  .bar-label { font-size: 0.65rem; }
+  .heatmap-grid { grid-template-columns: repeat(52, 11px); grid-template-rows: repeat(7, 11px); gap: 2px; }
+  .hm-cell { width: 11px; height: 11px; }
+  .sbk-name { font-size: 0.85rem; }
+  .sbk-time { font-size: 0.75rem; }
+}
+@media (max-width: 380px) {
+  .analytics-grid { grid-template-columns: repeat(2, 1fr); }
+  .bar-chart { height: 120px; }
+  .heatmap-grid { grid-template-columns: repeat(52, 8px); grid-template-rows: repeat(7, 8px); gap: 2px; }
+  .hm-cell { width: 8px; height: 8px; }
+}
 </style>
 </head>
 <body>
@@ -51,13 +70,13 @@
   <nav class="nav-sidebar" id="navSidebar">
     <div class="nav-logo"><span class="nav-logo-icon">📚</span><span class="nav-logo-text">Scholarium</span></div>
     <ul class="nav-links">
-      <li><a href="index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Home</span></a></li>
-      <li><a href="streak.html" class="nav-link"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
-      <li><a href="pomodoro.html" class="nav-link"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
-      <li><a href="analytics.html" class="nav-link active"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
-      <li><a href="todo.html" class="nav-link"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
-      <li><a href="inspire.html" class="nav-link"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
-      <li><a href="settings.html" class="nav-link"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
+      <li><a href="index.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🏠</span><span>Home</span></a></li>
+      <li><a href="streak.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
+      <li><a href="pomodoro.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
+      <li><a href="analytics.html" class="nav-link active" onclick="closeNav()"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
+      <li><a href="todo.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
+      <li><a href="inspire.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
+      <li><a href="settings.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
     </ul>
     <div class="nav-streak-badge"><span class="streak-fire">🔥</span><span id="navStreakCount">0</span><span class="streak-label">day streak</span></div>
   </nav>
@@ -103,6 +122,23 @@
     </div>
   </main>
 </div>
+
+<!-- Nav overlay (mobile) -->
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- Bottom nav (mobile) -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="index.html" class="bottom-nav-item "><span class="bottom-nav-icon">🏠</span><span class="bottom-nav-label">Home</span></a>
+    <a href="streak.html" class="bottom-nav-item "><span class="bottom-nav-icon">🔥</span><span class="bottom-nav-label">Streak</span></a>
+    <a href="pomodoro.html" class="bottom-nav-item "><span class="bottom-nav-icon">🌳</span><span class="bottom-nav-label">Grove</span></a>
+    <a href="analytics.html" class="bottom-nav-item active"><span class="bottom-nav-icon">📊</span><span class="bottom-nav-label">Stats</span></a>
+    <a href="todo.html" class="bottom-nav-item "><span class="bottom-nav-icon">✅</span><span class="bottom-nav-label">Tasks</span></a>
+    <a href="inspire.html" class="bottom-nav-item "><span class="bottom-nav-icon">✨</span><span class="bottom-nav-label">Inspire</span></a>
+    <a href="settings.html" class="bottom-nav-item "><span class="bottom-nav-icon">⚙️</span><span class="bottom-nav-label">Settings</span></a>
+  </div>
+</nav>
+
 <script src="app.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
