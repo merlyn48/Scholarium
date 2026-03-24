@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Inspire — Scholarium</title>
 <link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="shared.css">
@@ -76,6 +76,18 @@
 /* Affirmations */
 .affirmation-wrap { background:linear-gradient(135deg,var(--surface),var(--bg2)); border:1px solid var(--border); border-radius:14px; padding:24px; text-align:center; }
 .affirmation-text { font-family:var(--font-display); font-size:1.2rem; color:var(--text); font-style:italic; margin:12px 0; }
+
+@media (max-width: 540px) {
+  .inspire-hero { padding: 40px 20px; min-height: 300px; border-radius: 14px; }
+  .inspire-quote-text { font-size: 1.05rem; }
+  .inspire-quote-mark { font-size: 3.5rem; }
+  .inspire-actions { flex-direction: column; width: 100%; }
+  .inspire-actions .btn-primary,
+  .inspire-actions .btn-secondary { width: 100%; text-align: center; }
+  .quotes-masonry { columns: 1; }
+  .cat-pills { gap: 6px; }
+  .cat-pill { padding: 5px 12px; font-size: 0.8rem; }
+}
 </style>
 </head>
 <body>
@@ -84,13 +96,13 @@
   <nav class="nav-sidebar" id="navSidebar">
     <div class="nav-logo"><span class="nav-logo-icon">📚</span><span class="nav-logo-text">Scholarium</span></div>
     <ul class="nav-links">
-      <li><a href="index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Home</span></a></li>
-      <li><a href="streak.html" class="nav-link"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
-      <li><a href="pomodoro.html" class="nav-link"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
-      <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
-      <li><a href="todo.html" class="nav-link"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
-      <li><a href="inspire.html" class="nav-link active"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
-      <li><a href="settings.html" class="nav-link"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
+      <li><a href="index.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🏠</span><span>Home</span></a></li>
+      <li><a href="streak.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
+      <li><a href="pomodoro.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
+      <li><a href="analytics.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
+      <li><a href="todo.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
+      <li><a href="inspire.html" class="nav-link active" onclick="closeNav()"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
+      <li><a href="settings.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
     </ul>
     <div class="nav-streak-badge"><span class="streak-fire">🔥</span><span id="navStreakCount">0</span><span class="streak-label">day streak</span></div>
   </nav>
@@ -140,6 +152,23 @@
     </div>
   </main>
 </div>
+
+<!-- Nav overlay (mobile) -->
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- Bottom nav (mobile) -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="index.html" class="bottom-nav-item "><span class="bottom-nav-icon">🏠</span><span class="bottom-nav-label">Home</span></a>
+    <a href="streak.html" class="bottom-nav-item "><span class="bottom-nav-icon">🔥</span><span class="bottom-nav-label">Streak</span></a>
+    <a href="pomodoro.html" class="bottom-nav-item "><span class="bottom-nav-icon">🌳</span><span class="bottom-nav-label">Grove</span></a>
+    <a href="analytics.html" class="bottom-nav-item "><span class="bottom-nav-icon">📊</span><span class="bottom-nav-label">Stats</span></a>
+    <a href="todo.html" class="bottom-nav-item "><span class="bottom-nav-icon">✅</span><span class="bottom-nav-label">Tasks</span></a>
+    <a href="inspire.html" class="bottom-nav-item active"><span class="bottom-nav-icon">✨</span><span class="bottom-nav-label">Inspire</span></a>
+    <a href="settings.html" class="bottom-nav-item "><span class="bottom-nav-icon">⚙️</span><span class="bottom-nav-label">Settings</span></a>
+  </div>
+</nav>
+
 <script src="app.js"></script>
 <script>
 const QUOTES = [
