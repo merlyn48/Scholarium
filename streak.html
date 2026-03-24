@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Streak — Scholarium</title>
 <link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="shared.css">
@@ -49,6 +49,23 @@
 .record-icon { font-size:1.6rem; margin-bottom:6px; }
 .record-val { font-family:var(--font-display); font-size:1.5rem; color:var(--accent); display:block; }
 .record-lab { font-size:0.78rem; color:var(--text3); text-transform:uppercase; letter-spacing:0.08em; }
+
+@media (max-width: 540px) {
+  .streak-number { font-size: 3.5rem; }
+  .streak-ring-svg { inset: -10px; }
+  .streak-milestones { gap: 8px; }
+  .milestone-badge { min-width: 76px; padding: 10px 12px; }
+  .milestone-icon { font-size: 1.3rem; }
+  .cal-grid { gap: 4px; }
+  .cal-day { font-size: 0.75rem; border-radius: 4px; }
+  .records-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .record-val { font-size: 1.2rem; }
+}
+@media (max-width: 380px) {
+  .streak-number { font-size: 2.8rem; }
+  .milestone-badge { min-width: 60px; padding: 8px; }
+  .milestone-days { font-size: 1rem; }
+}
 </style>
 </head>
 <body>
@@ -57,13 +74,13 @@
   <nav class="nav-sidebar" id="navSidebar">
     <div class="nav-logo"><span class="nav-logo-icon">📚</span><span class="nav-logo-text">Scholarium</span></div>
     <ul class="nav-links">
-      <li><a href="index.html" class="nav-link"><span class="nav-icon">🏠</span><span>Home</span></a></li>
-      <li><a href="streak.html" class="nav-link active"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
-      <li><a href="pomodoro.html" class="nav-link"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
-      <li><a href="analytics.html" class="nav-link"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
-      <li><a href="todo.html" class="nav-link"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
-      <li><a href="inspire.html" class="nav-link"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
-      <li><a href="settings.html" class="nav-link"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
+      <li><a href="index.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🏠</span><span>Home</span></a></li>
+      <li><a href="streak.html" class="nav-link active" onclick="closeNav()"><span class="nav-icon">🔥</span><span>Streak</span></a></li>
+      <li><a href="pomodoro.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">🌳</span><span>Focus Grove</span></a></li>
+      <li><a href="analytics.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">📊</span><span>Analytics</span></a></li>
+      <li><a href="todo.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">✅</span><span>Tasks</span></a></li>
+      <li><a href="inspire.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">✨</span><span>Inspire</span></a></li>
+      <li><a href="settings.html" class="nav-link" onclick="closeNav()"><span class="nav-icon">⚙️</span><span>Settings</span></a></li>
     </ul>
     <div class="nav-streak-badge"><span class="streak-fire">🔥</span><span id="navStreakCount">0</span><span class="streak-label">day streak</span></div>
   </nav>
@@ -115,6 +132,23 @@
     </div>
   </main>
 </div>
+
+<!-- Nav overlay (mobile) -->
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- Bottom nav (mobile) -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="index.html" class="bottom-nav-item "><span class="bottom-nav-icon">🏠</span><span class="bottom-nav-label">Home</span></a>
+    <a href="streak.html" class="bottom-nav-item active"><span class="bottom-nav-icon">🔥</span><span class="bottom-nav-label">Streak</span></a>
+    <a href="pomodoro.html" class="bottom-nav-item "><span class="bottom-nav-icon">🌳</span><span class="bottom-nav-label">Grove</span></a>
+    <a href="analytics.html" class="bottom-nav-item "><span class="bottom-nav-icon">📊</span><span class="bottom-nav-label">Stats</span></a>
+    <a href="todo.html" class="bottom-nav-item "><span class="bottom-nav-icon">✅</span><span class="bottom-nav-label">Tasks</span></a>
+    <a href="inspire.html" class="bottom-nav-item "><span class="bottom-nav-icon">✨</span><span class="bottom-nav-label">Inspire</span></a>
+    <a href="settings.html" class="bottom-nav-item "><span class="bottom-nav-icon">⚙️</span><span class="bottom-nav-label">Settings</span></a>
+  </div>
+</nav>
+
 <script src="app.js"></script>
 <script>
 let calYear, calMonth;
