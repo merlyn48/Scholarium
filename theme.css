@@ -1,227 +1,317 @@
-/* ===== THEME CSS — ALL 8 THEMES ===== */
+/* ===== SCHOLARIUM — THEME CSS ===== */
 
-/* DEFAULT: Dark Academia */
+/* ──────────────────────────────────────────
+   DARK ACADEMIA — Candlelight. Dusty tomes.
+   ────────────────────────────────────────── */
 :root,
 [data-theme="dark-academia"] {
-  --bg: #1a1510;
-  --bg2: #221d16;
-  --bg3: #2c2519;
-  --surface: #2e2720;
-  --surface2: #3a3028;
-  --border: #4a3f32;
-  --text: #e8dcc8;
-  --text2: #b8a890;
-  --text3: #7a6a54;
-  --accent: #c8956c;
-  --accent2: #d4a04a;
-  --accent3: #9b7a58;
-  --glow: rgba(200,149,108,0.18);
-  --glow2: rgba(212,160,74,0.12);
-  --success: #7b9e8e;
-  --error: #c26b6b;
-  --nav-bg: rgba(26,21,16,0.97);
-  --card-shadow: 0 4px 32px rgba(0,0,0,0.5);
-  --particle-color: #c8956c;
-  --font-display: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
-  --font-body: 'EB Garamond', Georgia, serif;
-  --font-ui: 'Cormorant Garamond', Georgia, serif;
-  --hero-gradient: linear-gradient(135deg, #1a1510 0%, #2c1e0f 50%, #1a1510 100%);
-  --hero-text-shadow: 0 0 40px rgba(200,149,108,0.3);
-  --scrollbar-thumb: #4a3f32;
+  --bg:              #110e0a;
+  --bg2:             #1c1710;
+  --bg3:             #261f15;
+  --surface:         #2a221a;
+  --surface2:        #352b1f;
+  --border:          #4e3e2c;
+  --text:            #f0e2c8;
+  --text2:           #c4a87a;
+  --text3:           #7a6244;
+  --accent:          #d4924a;
+  --accent2:         #e8c06a;
+  --accent3:         #a06838;
+  --glow:            rgba(212,146,74,0.22);
+  --glow2:           rgba(232,192,106,0.14);
+  --success:         #6e9e7e;
+  --error:           #b85050;
+  --nav-bg:          rgba(17,14,10,0.97);
+  --card-shadow:     0 6px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
+  --particle-color:  #d4924a;
+  --font-display:    'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --font-body:       'EB Garamond', Georgia, serif;
+  --font-ui:         'Cormorant Garamond', Georgia, serif;
+  --hero-gradient:   radial-gradient(ellipse at 30% 60%, #2a1a08 0%, #110e0a 60%);
+  --hero-text-shadow:0 0 60px rgba(212,146,74,0.35), 0 2px 4px rgba(0,0,0,0.8);
+  --scrollbar-thumb: #4e3e2c;
+  --nav-accent-line: #d4924a;
+  --ring-color:      #d4924a;
+  --tree-trunk:      #7a5c30;
+  --tree-foliage:    #4a7a50;
+  --ground-color:    #2a1e0e;
+  --sky-color:       #1a1208;
 }
 
+/* ──────────────────────────────────────────
+   LIGHT ACADEMIA — Parchment. Morning libraries.
+   ────────────────────────────────────────── */
 [data-theme="light-academia"] {
-  --bg: #f5f0e8;
-  --bg2: #ede6d6;
-  --bg3: #e4dbc8;
-  --surface: #faf6ed;
-  --surface2: #ede6d6;
-  --border: #c8b89a;
-  --text: #2c2416;
-  --text2: #5a4a32;
-  --text3: #8a7a60;
-  --accent: #8b5e3c;
-  --accent2: #c8956c;
-  --accent3: #a07850;
-  --glow: rgba(139,94,60,0.12);
-  --glow2: rgba(200,149,108,0.1);
-  --success: #4a7c6a;
-  --error: #9a3d3d;
-  --nav-bg: rgba(245,240,232,0.97);
-  --card-shadow: 0 4px 24px rgba(100,80,50,0.15);
-  --particle-color: #8b5e3c;
-  --font-display: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
-  --font-body: 'EB Garamond', Georgia, serif;
-  --font-ui: 'Cormorant Garamond', Georgia, serif;
-  --hero-gradient: linear-gradient(135deg, #f5f0e8 0%, #ede0c8 50%, #f5f0e8 100%);
-  --hero-text-shadow: 0 0 40px rgba(139,94,60,0.2);
-  --scrollbar-thumb: #c8b89a;
+  --bg:              #f2ead8;
+  --bg2:             #e8dfc8;
+  --bg3:             #dcd2ba;
+  --surface:         #faf6ec;
+  --surface2:        #f0e8d4;
+  --border:          #c4b090;
+  --text:            #2a1e0c;
+  --text2:           #5c4422;
+  --text3:           #9a7c50;
+  --accent:          #7a4e28;
+  --accent2:         #c4843c;
+  --accent3:         #9a6038;
+  --glow:            rgba(122,78,40,0.18);
+  --glow2:           rgba(196,132,60,0.12);
+  --success:         #4e7850;
+  --error:           #963030;
+  --nav-bg:          rgba(242,234,216,0.97);
+  --card-shadow:     0 4px 24px rgba(80,50,20,0.14), inset 0 1px 0 rgba(255,255,255,0.7);
+  --particle-color:  #c4843c;
+  --font-display:    'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --font-body:       'EB Garamond', Georgia, serif;
+  --font-ui:         'Cormorant Garamond', Georgia, serif;
+  --hero-gradient:   radial-gradient(ellipse at 60% 30%, #f8f0d8 0%, #e8dcc4 100%);
+  --hero-text-shadow:0 0 40px rgba(122,78,40,0.18), 0 1px 2px rgba(80,50,20,0.3);
+  --scrollbar-thumb: #c4b090;
+  --nav-accent-line: #7a4e28;
+  --ring-color:      #7a4e28;
+  --tree-trunk:      #6e4820;
+  --tree-foliage:    #5a8040;
+  --ground-color:    #c4a060;
+  --sky-color:       #d8c8a0;
 }
 
+/* ──────────────────────────────────────────
+   COTTAGECORE — Moss and rain. Wild herbs.
+   ────────────────────────────────────────── */
 [data-theme="cottagecore"] {
-  --bg: #1e1a14;
-  --bg2: #261f16;
-  --bg3: #2e2718;
-  --surface: #312819;
-  --surface2: #3d3322;
-  --border: #5a4a30;
-  --text: #f0e8d0;
-  --text2: #c8b88a;
-  --text3: #8a7450;
-  --accent: #8fad7a;
-  --accent2: #d4b86a;
-  --accent3: #7b9468;
-  --glow: rgba(143,173,122,0.18);
-  --glow2: rgba(212,184,106,0.12);
-  --success: #8fad7a;
-  --error: #c26b6b;
-  --nav-bg: rgba(30,26,20,0.97);
-  --card-shadow: 0 4px 32px rgba(0,0,0,0.5);
-  --particle-color: #8fad7a;
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'EB Garamond', Georgia, serif;
-  --font-ui: 'Cormorant Garamond', Georgia, serif;
-  --hero-gradient: linear-gradient(135deg, #1e1a14 0%, #1e2814 50%, #1e1a14 100%);
-  --hero-text-shadow: 0 0 40px rgba(143,173,122,0.3);
-  --scrollbar-thumb: #5a4a30;
+  --bg:              #0e130e;
+  --bg2:             #141b12;
+  --bg3:             #1c2418;
+  --surface:         #202a1c;
+  --surface2:        #2a3624;
+  --border:          #3e5434;
+  --text:            #e4f0d8;
+  --text2:           #a8c890;
+  --text3:           #6a8858;
+  --accent:          #7ec86e;
+  --accent2:         #c8d870;
+  --accent3:         #5ea050;
+  --glow:            rgba(126,200,110,0.2);
+  --glow2:           rgba(200,216,112,0.13);
+  --success:         #7ec86e;
+  --error:           #c86060;
+  --nav-bg:          rgba(14,19,14,0.97);
+  --card-shadow:     0 6px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(126,200,110,0.06);
+  --particle-color:  #7ec86e;
+  --font-display:    'Playfair Display', Georgia, serif;
+  --font-body:       'EB Garamond', Georgia, serif;
+  --font-ui:         'Cormorant Garamond', Georgia, serif;
+  --hero-gradient:   radial-gradient(ellipse at 20% 70%, #0a1a08 0%, #0e130e 70%);
+  --hero-text-shadow:0 0 50px rgba(126,200,110,0.3), 0 2px 4px rgba(0,0,0,0.7);
+  --scrollbar-thumb: #3e5434;
+  --nav-accent-line: #7ec86e;
+  --ring-color:      #7ec86e;
+  --tree-trunk:      #5a3a18;
+  --tree-foliage:    #4a9040;
+  --ground-color:    #1e3018;
+  --sky-color:       #0e1a0e;
 }
 
+/* ──────────────────────────────────────────
+   INDIE — Neon signs. Vinyl records. 2am glow.
+   ────────────────────────────────────────── */
 [data-theme="indie"] {
-  --bg: #0f0f14;
-  --bg2: #161620;
-  --bg3: #1c1c2a;
-  --surface: #1e1e2c;
-  --surface2: #282838;
-  --border: #3a3a54;
-  --text: #e8e0f8;
-  --text2: #a898d8;
-  --text3: #6858a8;
-  --accent: #c084fc;
-  --accent2: #f472b6;
-  --accent3: #818cf8;
-  --glow: rgba(192,132,252,0.18);
-  --glow2: rgba(244,114,182,0.12);
-  --success: #6ee7b7;
-  --error: #f87171;
-  --nav-bg: rgba(15,15,20,0.97);
-  --card-shadow: 0 4px 32px rgba(0,0,0,0.6);
-  --particle-color: #c084fc;
-  --font-display: 'Playfair Display', sans-serif;
-  --font-body: 'EB Garamond', serif;
-  --font-ui: 'Cormorant Garamond', serif;
-  --hero-gradient: linear-gradient(135deg, #0f0f14 0%, #1a0f24 50%, #0f0f14 100%);
-  --hero-text-shadow: 0 0 40px rgba(192,132,252,0.4);
-  --scrollbar-thumb: #3a3a54;
+  --bg:              #08080f;
+  --bg2:             #0e0e1c;
+  --bg3:             #141428;
+  --surface:         #181830;
+  --surface2:        #1e1e3c;
+  --border:          #30305a;
+  --text:            #f0eaff;
+  --text2:           #b090e0;
+  --text3:           #6858a0;
+  --accent:          #e060f0;
+  --accent2:         #60c0f8;
+  --accent3:         #a050e0;
+  --glow:            rgba(224,96,240,0.25);
+  --glow2:           rgba(96,192,248,0.18);
+  --success:         #50e0a0;
+  --error:           #f06060;
+  --nav-bg:          rgba(8,8,15,0.97);
+  --card-shadow:     0 6px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(224,96,240,0.08);
+  --particle-color:  #e060f0;
+  --font-display:    'Playfair Display', sans-serif;
+  --font-body:       'EB Garamond', serif;
+  --font-ui:         'Cormorant Garamond', serif;
+  --hero-gradient:   radial-gradient(ellipse at 40% 50%, #1a0820 0%, #08080f 65%);
+  --hero-text-shadow:0 0 40px rgba(224,96,240,0.5), 0 0 80px rgba(96,192,248,0.2);
+  --scrollbar-thumb: #30305a;
+  --nav-accent-line: #e060f0;
+  --ring-color:      #e060f0;
+  --tree-trunk:      #604090;
+  --tree-foliage:    #a030c0;
+  --ground-color:    #140820;
+  --sky-color:       #080810;
 }
 
+/* ──────────────────────────────────────────
+   ETHEREAL — Quartz crystals. Cloud temples.
+   ────────────────────────────────────────── */
 [data-theme="ethereal"] {
-  --bg: #f8f4ff;
-  --bg2: #f0eaff;
-  --bg3: #e8e0ff;
-  --surface: #ffffff;
-  --surface2: #f5f0ff;
-  --border: #d0c0f0;
-  --text: #2a1a4a;
-  --text2: #5a3a8a;
-  --text3: #9a78c8;
-  --accent: #9b59d0;
-  --accent2: #e879f9;
-  --accent3: #7c3aed;
-  --glow: rgba(155,89,208,0.15);
-  --glow2: rgba(232,121,249,0.1);
-  --success: #6ee7b7;
-  --error: #f87171;
-  --nav-bg: rgba(248,244,255,0.97);
-  --card-shadow: 0 4px 24px rgba(100,60,180,0.12);
-  --particle-color: #9b59d0;
-  --font-display: 'Playfair Display', serif;
-  --font-body: 'EB Garamond', serif;
-  --font-ui: 'Cormorant Garamond', serif;
-  --hero-gradient: linear-gradient(135deg, #f8f4ff 0%, #ecdaff 50%, #f8f4ff 100%);
-  --hero-text-shadow: 0 0 40px rgba(155,89,208,0.25);
-  --scrollbar-thumb: #d0c0f0;
+  --bg:              #f8f4ff;
+  --bg2:             #f0ebff;
+  --bg3:             #e6dfff;
+  --surface:         #ffffff;
+  --surface2:        #f5f0ff;
+  --border:          #ccc0f0;
+  --text:            #281440;
+  --text2:           #5c3890;
+  --text3:           #9878c8;
+  --accent:          #8840d0;
+  --accent2:         #d060f0;
+  --accent3:         #6030b0;
+  --glow:            rgba(136,64,208,0.18);
+  --glow2:           rgba(208,96,240,0.12);
+  --success:         #40c888;
+  --error:           #e04060;
+  --nav-bg:          rgba(248,244,255,0.97);
+  --card-shadow:     0 4px 28px rgba(100,60,180,0.14), inset 0 1px 0 rgba(255,255,255,0.9);
+  --particle-color:  #8840d0;
+  --font-display:    'Playfair Display', serif;
+  --font-body:       'EB Garamond', serif;
+  --font-ui:         'Cormorant Garamond', serif;
+  --hero-gradient:   radial-gradient(ellipse at 60% 40%, #f0e4ff 0%, #e8dcff 100%);
+  --hero-text-shadow:0 0 40px rgba(136,64,208,0.28), 0 1px 2px rgba(80,40,160,0.2);
+  --scrollbar-thumb: #ccc0f0;
+  --nav-accent-line: #8840d0;
+  --ring-color:      #8840d0;
+  --tree-trunk:      #6838a8;
+  --tree-foliage:    #a868e0;
+  --ground-color:    #e0d4f8;
+  --sky-color:       #f0e8ff;
 }
 
+/* ──────────────────────────────────────────
+   FAIRYCORE — Golden hour. Fireflies. Glades.
+   ────────────────────────────────────────── */
 [data-theme="fairycore"] {
-  --bg: #fff8f0;
-  --bg2: #fff0e8;
-  --bg3: #ffe8d8;
-  --surface: #ffffff;
-  --surface2: #fff5ec;
-  --border: #f0c8a0;
-  --text: #3a1e0a;
-  --text2: #7a3a10;
-  --text3: #c06820;
-  --accent: #f08030;
-  --accent2: #f8c070;
-  --accent3: #e05020;
-  --glow: rgba(240,128,48,0.15);
-  --glow2: rgba(248,192,112,0.12);
-  --success: #80c070;
-  --error: #e05050;
-  --nav-bg: rgba(255,248,240,0.97);
-  --card-shadow: 0 4px 24px rgba(200,100,0,0.1);
-  --particle-color: #f08030;
-  --font-display: 'Playfair Display', serif;
-  --font-body: 'EB Garamond', serif;
-  --font-ui: 'Cormorant Garamond', serif;
-  --hero-gradient: linear-gradient(135deg, #fff8f0 0%, #ffe8c8 50%, #fff8f0 100%);
-  --hero-text-shadow: 0 0 40px rgba(240,128,48,0.25);
-  --scrollbar-thumb: #f0c8a0;
+  --bg:              #0c0a04;
+  --bg2:             #16120a;
+  --bg3:             #201a0e;
+  --surface:         #261e10;
+  --surface2:        #302616;
+  --border:          #5c4820;
+  --text:            #fff8e0;
+  --text2:           #e0c060;
+  --text3:           #a08030;
+  --accent:          #f8b820;
+  --accent2:         #f8e060;
+  --accent3:         #e08820;
+  --glow:            rgba(248,184,32,0.28);
+  --glow2:           rgba(248,224,96,0.18);
+  --success:         #70c870;
+  --error:           #e05050;
+  --nav-bg:          rgba(12,10,4,0.97);
+  --card-shadow:     0 6px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(248,184,32,0.08);
+  --particle-color:  #f8b820;
+  --font-display:    'Playfair Display', serif;
+  --font-body:       'EB Garamond', serif;
+  --font-ui:         'Cormorant Garamond', serif;
+  --hero-gradient:   radial-gradient(ellipse at 50% 60%, #1e1408 0%, #0c0a04 65%);
+  --hero-text-shadow:0 0 60px rgba(248,184,32,0.45), 0 0 120px rgba(248,224,96,0.2);
+  --scrollbar-thumb: #5c4820;
+  --nav-accent-line: #f8b820;
+  --ring-color:      #f8b820;
+  --tree-trunk:      #6a4010;
+  --tree-foliage:    #c87820;
+  --ground-color:    #1a1208;
+  --sky-color:       #0a0804;
 }
 
+/* ──────────────────────────────────────────
+   WITCHY — Moonlit cauldrons. Purple smoke.
+   ────────────────────────────────────────── */
 [data-theme="witchy"] {
-  --bg: #0d0810;
-  --bg2: #130e18;
-  --bg3: #1a1420;
-  --surface: #1c1624;
-  --surface2: #242030;
-  --border: #3c3050;
-  --text: #e8d8f8;
-  --text2: #a888d8;
-  --text3: #6848a8;
-  --accent: #9d4edd;
-  --accent2: #c77dff;
-  --accent3: #7b2fbe;
-  --glow: rgba(157,78,221,0.22);
-  --glow2: rgba(199,125,255,0.14);
-  --success: #70c080;
-  --error: #d06060;
-  --nav-bg: rgba(13,8,16,0.98);
-  --card-shadow: 0 4px 32px rgba(0,0,0,0.7);
-  --particle-color: #9d4edd;
-  --font-display: 'Playfair Display', serif;
-  --font-body: 'EB Garamond', serif;
-  --font-ui: 'Cormorant Garamond', serif;
-  --hero-gradient: linear-gradient(135deg, #0d0810 0%, #180d28 50%, #0d0810 100%);
-  --hero-text-shadow: 0 0 40px rgba(157,78,221,0.4);
-  --scrollbar-thumb: #3c3050;
+  --bg:              #070510;
+  --bg2:             #0e0a1a;
+  --bg3:             #160f24;
+  --surface:         #1a1230;
+  --surface2:        #211840;
+  --border:          #3c2c60;
+  --text:            #ece0ff;
+  --text2:           #b090e0;
+  --text3:           #7050a8;
+  --accent:          #b040e0;
+  --accent2:         #e080ff;
+  --accent3:         #8020c0;
+  --glow:            rgba(176,64,224,0.28);
+  --glow2:           rgba(224,128,255,0.18);
+  --success:         #60c870;
+  --error:           #d05050;
+  --nav-bg:          rgba(7,5,16,0.98);
+  --card-shadow:     0 8px 48px rgba(0,0,0,0.75), 0 0 0 1px rgba(176,64,224,0.1);
+  --particle-color:  #b040e0;
+  --font-display:    'Playfair Display', serif;
+  --font-body:       'EB Garamond', serif;
+  --font-ui:         'Cormorant Garamond', serif;
+  --hero-gradient:   radial-gradient(ellipse at 50% 50%, #180828 0%, #070510 70%);
+  --hero-text-shadow:0 0 50px rgba(176,64,224,0.5), 0 0 100px rgba(224,128,255,0.2), 0 2px 4px rgba(0,0,0,0.9);
+  --scrollbar-thumb: #3c2c60;
+  --nav-accent-line: #b040e0;
+  --ring-color:      #b040e0;
+  --tree-trunk:      #4a1870;
+  --tree-foliage:    #8028b8;
+  --ground-color:    #100820;
+  --sky-color:       #050310;
 }
 
+/* ──────────────────────────────────────────
+   GALAXY — Nebulae. Star nurseries. Void.
+   ────────────────────────────────────────── */
 [data-theme="galaxy"] {
-  --bg: #04060f;
-  --bg2: #07091a;
-  --bg3: #0b0e22;
-  --surface: #0e1228;
-  --surface2: #141832;
-  --border: #2a2e50;
-  --text: #d8e8ff;
-  --text2: #7898e8;
-  --text3: #3858a8;
-  --accent: #4facfe;
-  --accent2: #00f2fe;
-  --accent3: #a78bfa;
-  --glow: rgba(79,172,254,0.2);
-  --glow2: rgba(0,242,254,0.12);
-  --success: #4ade80;
-  --error: #f87171;
-  --nav-bg: rgba(4,6,15,0.98);
-  --card-shadow: 0 4px 40px rgba(0,0,0,0.7);
-  --particle-color: #4facfe;
-  --font-display: 'Cinzel', 'Playfair Display', serif;
-  --font-body: 'EB Garamond', serif;
-  --font-ui: 'Cormorant Garamond', serif;
-  --hero-gradient: linear-gradient(135deg, #04060f 0%, #0a0f28 50%, #04060f 100%);
-  --hero-text-shadow: 0 0 60px rgba(79,172,254,0.4), 0 0 120px rgba(79,172,254,0.2);
-  --scrollbar-thumb: #2a2e50;
+  --bg:              #020408;
+  --bg2:             #050a14;
+  --bg3:             #091020;
+  --surface:         #0c1428;
+  --surface2:        #101c34;
+  --border:          #1e3050;
+  --text:            #c8e0ff;
+  --text2:           #6090d0;
+  --text3:           #304870;
+  --accent:          #38b0ff;
+  --accent2:         #00f0e8;
+  --accent3:         #6060ff;
+  --glow:            rgba(56,176,255,0.25);
+  --glow2:           rgba(0,240,232,0.15);
+  --success:         #40e888;
+  --error:           #f05858;
+  --nav-bg:          rgba(2,4,8,0.98);
+  --card-shadow:     0 8px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(56,176,255,0.08);
+  --particle-color:  #38b0ff;
+  --font-display:    'Cinzel', 'Playfair Display', serif;
+  --font-body:       'EB Garamond', serif;
+  --font-ui:         'Cormorant Garamond', serif;
+  --hero-gradient:   radial-gradient(ellipse at 30% 40%, #0a1830 0%, #020408 65%);
+  --hero-text-shadow:0 0 60px rgba(56,176,255,0.5), 0 0 120px rgba(0,240,232,0.2), 0 2px 4px rgba(0,0,0,0.9);
+  --scrollbar-thumb: #1e3050;
+  --nav-accent-line: #38b0ff;
+  --ring-color:      #38b0ff;
+  --tree-trunk:      #204060;
+  --tree-foliage:    #1868a0;
+  --ground-color:    #0a1830;
+  --sky-color:       #020408;
+}
+
+/* ─── Ring fill uses theme ring color ─── */
+.ring-fill {
+  stroke: var(--ring-color) !important;
+  filter: drop-shadow(0 0 8px var(--ring-color)) !important;
+}
+
+/* ─── Grain texture overlay ─── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 180px;
+  mix-blend-mode: overlay;
 }
